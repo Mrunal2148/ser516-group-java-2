@@ -1,0 +1,17 @@
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Dashboard from "./Dashboard";
+import Home from "./Home"; // Create a Home component if it doesn't exist
+
+const MainContent = () => {
+  return (
+    <div className="main-content">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </div>
+  );
+};
+
+export default MainContent;
