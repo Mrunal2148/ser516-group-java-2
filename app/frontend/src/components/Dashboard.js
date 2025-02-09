@@ -26,26 +26,23 @@ export default function Dashboard() {
         body: JSON.stringify(updatedLinks),
       })
         .then((response) => {
-          console.log('Response status:', response.status);  // Log response status
+          console.log('Response status:', response.status);  
           if (!response.ok) {
             throw new Error(`Network response was not ok: ${response.statusText}`);
           }
-          // Check if the response is actually JSON
-          return response.text();  // We use text() instead of json() to check the raw response
+          
         })
         .then((data) => {
           try {
-            const jsonData = JSON.parse(data);  // Manually parse the data to handle HTML errors
+            const jsonData = JSON.parse(data);  
             console.log("Links saved:", jsonData.message);
-            
-            // Optionally, refetch the links after saving
             fetch("http://127.0.0.1:5000/links.json")
               .then((response) => response.json())
               .then((data) => setLinks(data))
               .catch((error) => console.error("Error fetching links:", error));
           } catch (error) {
             console.error("Error parsing JSON:", error);
-            console.error("Response was:", data);  // Log the raw response for debugging
+            console.error("Response was:", data);  
           }
         })
         .catch((error) => {
