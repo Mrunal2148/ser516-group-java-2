@@ -13,7 +13,8 @@ export default function Dashboard() {
   }, []);
 
   const addLink = () => {
-    if (newLink) {
+    const githubRepoRegex = /^https:\/\/github\.com\/[^\/]+\/[^\/]+$/;
+    if (newLink && githubRepoRegex.test(newLink)) {
       const updatedLinks = [...links, newLink];
       setLinks(updatedLinks);
       setNewLink("");
@@ -48,6 +49,9 @@ export default function Dashboard() {
         .catch((error) => {
           console.error("There was a problem with the fetch operation:", error);
         });
+    } else {
+      console.error("Invalid GitHub repository URL");
+      alert("Invalid GitHub repository URL. Please enter a valid URL.");  
     }
   };
     
