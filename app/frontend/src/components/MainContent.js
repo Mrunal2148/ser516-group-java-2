@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import Dashboard from "./Dashboard";
+import AddProject from "./AddProject";
 import Home from "./Home"; 
 import RunMetrics from "./RunMetrics";
 
@@ -9,7 +9,7 @@ const MainContent = () => {
     <div className="main-content">
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/AddProject" element={<AddProject />} />
         <Route path="/runmetric" element={<RunMetrics />} />
       </Routes>
     </div>

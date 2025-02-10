@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@mui/material";
 import Button from "@mui/material/Button";
 
-export default function Dashboard() {
+export default function AddProject() {
   const [links, setLinks] = useState([]);
   const [newLink, setNewLink] = useState("");
 

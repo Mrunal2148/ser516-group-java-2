@@ -14,7 +14,7 @@ const Sidebar = () => {
           </NavLink>
         </li>
         <li className="sidebar-item">
-          <NavLink to="/dashboard">
+          <NavLink to="/AddProject">
             <FaTachometerAlt />
             <span className="icon-text">Add Projects</span>
           </NavLink>
