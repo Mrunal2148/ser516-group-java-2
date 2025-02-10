@@ -7,9 +7,10 @@ export default function AddProject() {
   const [newLink, setNewLink] = useState("");
 
   useEffect(() => {
-    fetch("/links.json")
+    fetch("http://127.0.0.1:5000/links.json") // Ensure this path is correct
       .then((response) => response.json())
-      .then((data) => setLinks(data));
+      .then((data) => setLinks(data))
+      .catch((error) => console.error("Error fetching links:", error));
   }, []);
 
   const addLink = () => {
