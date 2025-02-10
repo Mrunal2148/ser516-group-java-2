@@ -6,7 +6,7 @@ const Home = () => {
       <div>
         <h1>Welcome to the Project Metrics Calculator</h1>
         <p>Select an option from the sidebar to get started!</p>
-        <Dropdown />
+        
       </div>
   );
 };
