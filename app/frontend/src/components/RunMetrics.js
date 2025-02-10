@@ -15,11 +15,13 @@ const RunMetrics = () => {
   return (
     <div>
       <Dropdown />
-      <ul>
-        {links.map((link, index) => (
-          <li key={index}>{link}</li>
+      <label>Select Repository: </label>
+      <select defaultValue="">
+        <option value="" disabled>--Select--</option>
+        {links.slice(1).map((link, index) => (
+          <option key={index} value={link}>{link}</option>
         ))}
-      </ul>
+      </select>
     </div>
   );
 };
