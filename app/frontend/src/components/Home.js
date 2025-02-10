@@ -1,0 +1,12 @@
+import React from "react";
+
+const Home = () => {
+  return (
+    <div>
+      <h1>Welcome to the Project Metrics Calculator</h1>
+      <p>Select an option from the sidebar to get started!</p>
+    </div>
+  );
+};
+
+export default Home;
