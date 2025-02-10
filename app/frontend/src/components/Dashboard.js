@@ -14,8 +14,8 @@ export default function Dashboard() {
 
   const addLink = () => {
     const githubRepoRegex = /^https:\/\/github\.com\/[^\/]+\/[^\/]+$/;
-    if (newLink && githubRepoRegex.test(newLink)) {
-      const updatedLinks = [...links, newLink];
+    if (newLink && githubRepoRegex.test(`https://github.com/${newLink}`)) {
+      const updatedLinks = [...links, `https://github.com/${newLink}`];
       setLinks(updatedLinks);
       setNewLink("");
   
@@ -66,13 +66,17 @@ export default function Dashboard() {
               <li key={index}>{link}</li>
             ))}
           </ul>
-          <input
-            type="text"
-            value={newLink}
-            onChange={(e) => setNewLink(e.target.value)}
-            placeholder="Enter a new link"
-            className="border p-2 mr-2"
-          />
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <span style={{ color: 'grey' }}>https://github.com/</span>
+            <input
+              type="text"
+              value={newLink}
+              onChange={(e) => setNewLink(e.target.value)}
+              placeholder="user/repo"
+              className="border p-2 mr-2"
+              style={{ flex: 1 }}
+            />
+          </div>
           <Button onClick={addLink}>Add Link</Button>
         </CardContent>
       </Card>
