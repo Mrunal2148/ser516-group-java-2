@@ -63,7 +63,7 @@ export default function AddProject() {
         <CardContent>
           <h2 className="text-xl font-bold mb-4">Manage Links</h2>
           <ul>
-            {links.map((link, index) => (
+            {links.slice(1).map((link, index) => (
               <li key={index}>{link}</li>
             ))}
           </ul>
