@@ -28,6 +28,35 @@ const FogIndexCalculator = () => {
     }
   };
 
+// 'fogIndex' to 'Fog Index'
+  const formatKey = (key) => {
+    return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+  };
+
+  const renderTable = () => {
+    if (!result) return null;
+
+    const entries = Object.entries(result);
+    const entriesToRender = entries.slice(0, -1); // Don't show 'message' key
+
+    return (
+      <table style={{ borderCollapse: 'collapse'}}>
+        <tbody>
+          {entriesToRender.map(([key, value], index) => (
+            <tr key={key} style={{ borderBottom: '1px solid black' }}>
+              <td style={{ padding: '8px', border: '1px solid black', fontWeight: index === 0 ? 'bold' : 'normal' }}>
+                {formatKey(key)}
+              </td>
+              <td style={{ padding: '8px', border: '1px solid black', fontWeight: index === 0 ? 'bold' : 'normal' }}>
+                {value}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  };
+
   return (
     <div>
       <h2>Fog Index Calculator</h2>
@@ -44,7 +73,7 @@ const FogIndexCalculator = () => {
       {result && (
         <div>
           <h3>Calculation Result:</h3>
-          <pre>{JSON.stringify(result, null, 2)}</pre>
+          {renderTable()}
         </div>
       )}
     </div>
