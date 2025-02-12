@@ -5,22 +5,27 @@ const FogIndexCalculator = () => {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
-  const calculateFogIndex = () => {
-    fetch(`http://127.0.0.1:5000/api/fog-index/calculate?githubZipUrl=${encodeURIComponent(githubUrl)}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.error) {
-          setError(data.error);
-          setResult(null);
-        } else {
-          setResult(data);
-          setError(null);
+  const calculateFogIndex = async () => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8080/api/fog-index/calculate?githubZipUrl=${encodeURIComponent(githubUrl)}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
         }
-      })
-      .catch((error) => {
-        setError("Failed to fetch the Fog Index");
-        setResult(null);
-      });
+      );
+  
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+  
+      const data = await response.json();
+      setResult(data);
+      setError(null);
+    } catch (error) {
+      setError(error.message || "Failed to fetch the Fog Index");
+      setResult(null);
+    }
   };
 
   return (
@@ -28,6 +33,8 @@ const FogIndexCalculator = () => {
       <h2>Fog Index Calculator</h2>
       <input
         type="text"
+        id="githubUrl"
+        name="githubUrl"
         value={githubUrl}
         onChange={(e) => setGithubUrl(e.target.value)}
         placeholder="Enter GitHub repository URL"
