@@ -10,7 +10,8 @@ const MainContent = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/AddProject" element={<AddProject />} />
-        <Route path="/runmetric" element={<RunMetrics />} />
+        <Route path="/fogindex" />
+        {/* TODO: Add Fog index component */}
       </Routes>
     </div>
   );
