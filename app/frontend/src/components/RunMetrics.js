@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Dropdown from "./Dropdown";
+import "./css/RunMetrics.css";
 
 const RunMetrics = () => {
   const [links, setLinks] = useState([]);
@@ -41,7 +42,8 @@ const RunMetrics = () => {
           <option key={index} value={link}>{link}</option>
         ))}
       </select>
-      <button onClick={handleRun}>Run</button>
+      &nbsp; &nbsp;
+      <button class="run-button" onClick={handleRun}>Run</button>
     </div>
   );
 };

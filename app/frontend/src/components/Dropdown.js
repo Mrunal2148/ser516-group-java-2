@@ -13,7 +13,7 @@ const Dropdown = ({ onMetricSelect }) => {
   return (
     <div className="dropdown">
       <label htmlFor="metrics-dropdown">Select Metric: &nbsp;</label>
-      <select id="metrics-dropdown" value={selectedOption} onChange={handleChange} className="dropdown">
+      <select id="metrics-dropdown" value={selectedOption} onChange={handleChange}>
         <option value="">--Select--</option>
         <option value="fog-index">Fog Index</option>
         <option value="code-comment-coverage">Code Comment Coverage</option>
