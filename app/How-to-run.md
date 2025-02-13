@@ -1,0 +1,16 @@
+## Frontend: ..\frontend>
+npm i
+npm run
+npm start
+
+## Backend: ..\backedn>
+# Set-up python venev, flask
+
+Note: You may need to use 'python3' instead of 'python'.
+
+python -m venv venv
+source venv/bin/activate  # On macOS/Linux
+venv\Scripts\activate  # On Windows
+pip install -r requirements.txt
+pip install flask flask-cors
+python save_links.py
