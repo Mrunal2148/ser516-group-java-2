@@ -1,19 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import './css/Spinner.css';
 
 const FogIndexCalculator = () => {
-  const [githubUrl, setGithubUrl] = useState("");
+  const location = useLocation();
+  const [githubUrl, setGithubUrl] = useState(location.state?.githubUrl || "");
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(null);
 
-  const calculateFogIndex = async () => {
+  useEffect(() => {
+    if (location.state?.githubUrl) {
+      setGithubUrl(location.state.githubUrl);
+      calculateFogIndex(location.state.githubUrl);
+    }
+  }, [location.state]);
+
+  const calculateFogIndex = async (url) => {
     try {
       setLoading(true);
       setError(null);
 
       const response = await fetch(
-        `http://127.0.0.1:8080/api/fog-index/calculate?githubZipUrl=${encodeURIComponent(githubUrl)}`,
+        `http://127.0.0.1:8080/api/fog-index/calculate?githubZipUrl=${encodeURIComponent(url)}`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -74,9 +83,8 @@ const FogIndexCalculator = () => {
         onChange={(e) => setGithubUrl(e.target.value)}
         placeholder="Enter GitHub repository URL"
       />
-      <button onClick={calculateFogIndex}>Calculate</button>
       {loading && 
-      <div>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
         <div className="spinner"/>
         <span>&nbsp; &nbsp; Calculating...</span>
       </div>}
