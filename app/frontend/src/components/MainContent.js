@@ -12,6 +12,7 @@ const MainContent = () => {
         <Route path="/" element={<Home />} />
         <Route path="/AddProject" element={<AddProject />} />
         <Route path="/fogindex" element={<FogIndexCalculator />} />
+        <Route path="/runmetric" element={<RunMetrics />} />
       </Routes>
     </div>
   );
