@@ -29,6 +29,9 @@ const Sidebar = () => {
           <NavLink to="/codecomment">
             <FaCalculator />
             <span className="icon-text">Code Comment</span>
+          <NavLink to="/fogindex">
+            <FaCalculator />
+            <span className="icon-text">Fog Index</span>
           </NavLink>
         </li>
       </ul>
