@@ -4,6 +4,8 @@ npm run
 npm start
 
 ## Backend: ..\backedn>
+
+
 # Set-up python venev, flask
 
 Note: You may need to use 'python3' instead of 'python'.
@@ -14,3 +16,10 @@ venv\Scripts\activate  # On Windows
 pip install -r requirements.txt
 pip install flask flask-cors
 python save_links.py
+
+
+#Java Backend Setup
+
+Pre-requisite: maven
+install dependencies : mvn install
+Starting server: mvn spring-boot:run
