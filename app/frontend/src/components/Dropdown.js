@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import './css/Dropdown.css';
 
-const Dropdown = () => {
+const Dropdown = ({ onMetricSelect }) => {
   const [selectedOption, setSelectedOption] = useState('');
 
   const handleChange = (event) => {
-    setSelectedOption(event.target.value);
+    const value = event.target.value;
+    setSelectedOption(value);
+    onMetricSelect(value); // Call the callback function with the selected value
   };
 
   return (
