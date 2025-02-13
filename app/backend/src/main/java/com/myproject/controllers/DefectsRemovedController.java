@@ -14,8 +14,8 @@ public class DefectsRemovedController {
         this.defectsRemovedService = defectsRemovedService;
     }
 
-    @GetMapping("/defects-removed")
-    public Map<String, Integer> getDefectsRemoved(@RequestParam String owner, @RequestParam String repo) {
-        return defectsRemovedService.getDefectsRemovedPerWeek(owner, repo);
+    @GetMapping("/defects-stats")
+    public Map<String, Object> getBugStatistics(@RequestParam String owner, @RequestParam String repo) {
+        return defectsRemovedService.getBugStatistics(owner, repo);
     }
 }
