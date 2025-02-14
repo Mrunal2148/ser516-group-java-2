@@ -52,6 +52,29 @@ def calculate_comment_coverage(files):
 
     return (comment_lines / total_lines) * 100 if total_lines > 0 else 0
 
+def save_to_json(repo_url, coverage):
+    data = {
+        "repo_url": repo_url,
+        "coverage": coverage,
+        "timestamp": datetime.utcnow().isoformat()
+    }
+    
+    file_path = "coverage_data.json"
+    
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            try:
+                existing_data = json.load(f)
+            except json.JSONDecodeError:
+                existing_data = []
+    else:
+        existing_data = []
+    
+    existing_data.append(data)
+    
+    with open(file_path, "w") as f:
+        json.dump(existing_data, f, indent=4)
+
 @app.route("/analyze", methods=["POST"])
 def analyze_repository():
     data = request.get_json()
@@ -69,6 +92,8 @@ def analyze_repository():
         coverage = calculate_comment_coverage(code_files)
 
         shutil.rmtree(repo_path)  # Cleanup cloned repo
+
+        save_to_json(repo_url, coverage)
 
         return jsonify({"coverage": coverage})
     except Exception as e:
