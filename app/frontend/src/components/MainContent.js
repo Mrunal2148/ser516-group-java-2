@@ -16,6 +16,7 @@ const MainContent = () => {
         <Route path="/runmetric" element={<RunMetrics />} />
         <Route path="/codecomment" element={<CodeComment />} />
         <Route path="/fogindex" element={<FogIndexCalculator />} />
+        <Route path="/runmetric" element={<RunMetrics />} />
       </Routes>
     </div>
   );
