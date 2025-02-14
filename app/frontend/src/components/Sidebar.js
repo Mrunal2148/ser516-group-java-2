@@ -26,10 +26,16 @@ const Sidebar = () => {
           </NavLink>
         </li>
         <li className="sidebar-item">
+          <NavLink to="/codecomment">
+            <FaCalculator />
+            <span className="icon-text">Code Comment</span>
+        </NavLink>
+        </li>
+        <li className="sidebar-item">
           <NavLink to="/fogindex">
             <FaCalculator />
             <span className="icon-text">Fog Index</span>
-          </NavLink>
+        </NavLink>
         </li>
       </ul>
     </div>
