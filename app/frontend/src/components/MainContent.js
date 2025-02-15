@@ -5,6 +5,7 @@ import Home from "./Home";
 import RunMetrics from "./RunMetrics";
 import CodeComment from "./CodeComment";
 import FogIndexCalculator from "./FogIndexCalculator";
+import CoverageDashboard from "./CoverageDashboard";
 
 
 const MainContent = () => {
@@ -17,6 +18,7 @@ const MainContent = () => {
         <Route path="/codecomment" element={<CodeComment />} />
         <Route path="/fogindex" element={<FogIndexCalculator />} />
         <Route path="/runmetric" element={<RunMetrics />} />
+        <Route path="/coverage" element={<CoverageDashboard />} />
       </Routes>
     </div>
   );
