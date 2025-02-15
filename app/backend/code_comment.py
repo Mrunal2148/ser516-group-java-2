@@ -2,6 +2,9 @@ import os
 import shutil
 import subprocess
 import re
+import json
+from datetime import datetime
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
@@ -50,11 +53,14 @@ def calculate_comment_coverage(files):
             total_lines += len(lines)
             comment_lines += sum(1 for line in lines if re.match(pattern, line))
 
-    return (comment_lines / total_lines) * 100 if total_lines > 0 else 0
+    coverage = (comment_lines / total_lines) * 100 if total_lines > 0 else 0
+    return total_lines, comment_lines, coverage
 
-def save_to_json(repo_url, coverage):
+def save_to_json(repo_url, total_lines, comment_lines, coverage):
     data = {
         "repo_url": repo_url,
+        "total_lines": total_lines,
+        "comment_lines": comment_lines,
         "coverage": coverage,
         "timestamp": datetime.utcnow().isoformat()
     }
@@ -89,11 +95,11 @@ def analyze_repository():
     try:
         clone_repo(repo_url, repo_path)
         code_files = get_code_files(repo_path)
-        coverage = calculate_comment_coverage(code_files)
+        total_lines, comment_lines, coverage = calculate_comment_coverage(code_files)
 
         shutil.rmtree(repo_path)  # Cleanup cloned repo
 
-        save_to_json(repo_url, coverage)
+        save_to_json(repo_url, total_lines, comment_lines, coverage)
 
         return jsonify({"coverage": coverage})
     except Exception as e:
