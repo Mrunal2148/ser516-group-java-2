@@ -1,7 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { FaHome, FaTachometerAlt, FaCog, FaCalculator } from 'react-icons/fa';
-import './css/Sidebar.css';
 
 const Sidebar = () => {
   return (
