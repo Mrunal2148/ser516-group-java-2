@@ -9,33 +9,39 @@ const Sidebar = () => {
       <ul>
         <li className="sidebar-item">
           <NavLink to="/">
-            <FaHome />
+            <FaHome/>
             <span className="icon-text">Home</span>
           </NavLink>
         </li>
         <li className="sidebar-item">
           <NavLink to="/AddProject">
-            <FaTachometerAlt />
+            <FaTachometerAlt/>
             <span className="icon-text">Add Projects</span>
           </NavLink>
         </li>
         <li className="sidebar-item">
           <NavLink to="/runmetric">
-            <FaCalculator />
+            <FaCalculator/>
             <span className="icon-text">Run Metrics</span>
           </NavLink>
         </li>
         <li className="sidebar-item">
           <NavLink to="/codecomment">
-            <FaCalculator />
+            <FaCalculator/>
             <span className="icon-text">Code Comment</span>
-        </NavLink>
+          </NavLink>
         </li>
         <li className="sidebar-item">
           <NavLink to="/fogindex">
-            <FaCalculator />
+            <FaCalculator/>
             <span className="icon-text">Fog Index</span>
-        </NavLink>
+          </NavLink>
+        </li>
+        <li className="sidebar-item">
+          <NavLink to="/defectremoval">
+            <FaCalculator/>
+            <span className="icon-text">Defect Removal</span>
+          </NavLink>
         </li>
       </ul>
     </div>

@@ -5,7 +5,7 @@ import Home from "./Home";
 import RunMetrics from "./RunMetrics";
 import CodeComment from "./CodeComment";
 import FogIndexCalculator from "./FogIndexCalculator";
-
+import DefectRemoval from "./DefectRemoval";
 
 const MainContent = () => {
   return (
@@ -17,6 +17,7 @@ const MainContent = () => {
         <Route path="/codecomment" element={<CodeComment />} />
         <Route path="/fogindex" element={<FogIndexCalculator />} />
         <Route path="/runmetric" element={<RunMetrics />} />
+        <Route path="/defectremoval" element={<DefectRemoval />} />
       </Routes>
     </div>
   );
