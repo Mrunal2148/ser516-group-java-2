@@ -21,25 +21,25 @@ const RunMetrics = () => {
 
     const fullLink = `${selectedLink}/archive/refs/heads/main.zip`;
 
-    switch (selectedMetric) {
-      case "fog-index":
-        navigate("/fogindex", { state: { githubUrl: fullLink } });
-        break;
-      case "code-comment-coverage":
-        navigate("/codecommentcoverage", { state: { githubUrl: fullLink } });
-        break;
-      case "defects-removed":
-        navigate("/defectsremoved", { state: { githubUrl: fullLink } });
-        break;
-      default:
-        alert("Invalid metric");
-        break;
+    if (selectedMetric === "code-comment-coverage") {
+      navigate("/codecomment", { state: { githubUrl: selectedLink } });
+    } else {
+      switch (selectedMetric) {
+        case "fog-index":
+          navigate("/fogindex", { state: { githubUrl: fullLink } });
+          break;
+        case "defects-removed":
+          navigate("/defectsremoved", { state: { githubUrl: fullLink } });
+          break;
+        default:
+          alert("Invalid metric");
+          break;
+      }
     }
   };
 
   return (
     <div className="run-metrics-container">
-      {/* Select Repository */}
       <SelectDropdown
         label="Select Repository"
         options={links.slice(1).map((link) => ({ label: link, value: link }))}
@@ -47,7 +47,6 @@ const RunMetrics = () => {
         onSelect={setSelectedLink}
       />
 
-  
       <SelectDropdown
         label="Select Metric"
         options={[
@@ -59,7 +58,6 @@ const RunMetrics = () => {
         onSelect={setSelectedMetric}
       />
 
-      {/* Run Button - Enabled only when both fields are selected */}
       <button 
         className="run-button" 
         onClick={handleRun} 
