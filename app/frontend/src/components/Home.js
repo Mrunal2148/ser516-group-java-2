@@ -1,13 +1,14 @@
 import React from "react";
 import mrunalImage from "./css/mrunal.jpeg";
-import shreyaImage from "./css/Shreya.jpg"
+import shreyaImage from "./css/Shreya.jpg";
+import kmdImage from "./css/kmd.jpg";
 
 const teamMembers = [
     {
-        name: "Kaumudi Degekar Gulbarga",
+        name: "Kaumudi Gulbarga",
         role: "Developer",
-        image: "https://via.placeholder.com/150",
-        description: "Software engineer passionate about AI and automation.",
+        image: kmdImage,
+        description: "Student and Software Engineer.",
       },
     
     {
