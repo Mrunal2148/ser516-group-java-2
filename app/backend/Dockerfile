@@ -1,32 +1,32 @@
-# --- Python Backend (save_links.py)---
-    FROM python:3.10 AS python-backend-save-links
+# # --- Python Backend (save_links.py)---
+#     FROM python:3.10 AS python-backend-save-links
 
-    WORKDIR /app
+#     WORKDIR /app
 
-    COPY backend/requirements.txt .
+#     COPY backend/requirements.txt .
     
-    RUN pip install --no-cache-dir -r requirements.txt
+#     RUN pip install --no-cache-dir -r requirements.txt
 
-    COPY backend/save_links.py ./
+#     COPY backend/save_links.py ./
 
-    EXPOSE 5000
+#     EXPOSE 5000
 
-    CMD ["python", "save_links.py"]
+#     CMD ["python", "save_links.py"]
 
-# --- Python Backend (code_comment.py) ---
-    FROM python:3.10 AS python-backend-code-comment
+# # --- Python Backend (code_comment.py) ---
+#     FROM python:3.10 AS python-backend-code-comment
 
-    WORKDIR /app
+#     WORKDIR /app
     
-    COPY backend/requirements.txt .
+#     COPY backend/requirements.txt .
     
-    RUN pip install --no-cache-dir -r requirements.txt
+#     RUN pip install --no-cache-dir -r requirements.txt
     
-    COPY backend/code_comment.py ./
+#     COPY backend/code_comment.py ./
     
-    EXPOSE 5001
+#     EXPOSE 5001
     
-    CMD ["python", "code_comment.py"]
+#     CMD ["python", "code_comment.py"]
     
 # Use a Maven image with OpenJDK 17
     FROM maven:3.8.1-openjdk-17 AS java-backend

@@ -7,22 +7,29 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - backend
+      - java-backend
+      - python-backend
     networks:
       - app-network
 
-  backend:
+  java-backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "5002:5000"
-      - "5003:5001"
       - "8080:8080"
+    networks:
+      - app-network
+
+  python-backend:
+    build:
+      context: ./backend/python-backend
+      dockerfile: Dockerfile
+    ports:
+      - "5005:5005"  
     networks:
       - app-network
 
 networks:
   app-network:
     driver: bridge
-
