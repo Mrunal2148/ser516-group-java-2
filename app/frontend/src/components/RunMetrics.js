@@ -43,7 +43,7 @@ const RunMetrics = () => {
         ))}
       </select>
       &nbsp; &nbsp;
-      <button class="run-button" onClick={handleRun}>Run</button>
+      <button className="run-button" onClick={handleRun}>Run</button>
     </div>
   );
 };
