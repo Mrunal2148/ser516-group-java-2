@@ -56,7 +56,6 @@ export default function AddProject() {
     }
   };
     
-
   return (
     <div className="p-4 grid gap-4 grid-cols-1 md:grid-cols-2">
       <Card>
@@ -67,20 +66,22 @@ export default function AddProject() {
               <li key={index}>{link}</li>
             ))}
           </ul>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <span style={{ color: 'grey' }}>https://github.com/</span>
-            <input
-              type="text"
-              value={newLink}
-              onChange={(e) => setNewLink(e.target.value)}
-              placeholder="user/repo"
-              className="border p-2 mr-2"
-              style={{ flex: 1 }}
-            />
+          <div>
+            <label className="block font-medium mb-1">GitHub Repository</label>
+            <div className="flex items-center">
+              <input
+                type="text"
+                value={newLink}
+                onChange={(e) => setNewLink(e.target.value)}
+                placeholder={newLink ? "" : "user/repo"} // Hides placeholder when typing
+                className="border p-2 mr-2 w-64"
+              />
+              <Button onClick={addLink}>Add Link</Button>
+            </div>
           </div>
-          <Button onClick={addLink}>Add Link</Button>
         </CardContent>
       </Card>
     </div>
   );
+  
 }
