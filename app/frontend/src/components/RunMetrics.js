@@ -10,7 +10,7 @@ const RunMetrics = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/links.json") // Ensure this path is correct
+    fetch("http://127.0.0.1:5005/links.json") 
       .then((response) => response.json())
       .then((data) => setLinks(data))
       .catch((error) => console.error("Error fetching links:", error));

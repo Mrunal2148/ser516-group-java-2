@@ -9,7 +9,7 @@ export default function CodeCoverage() {
     if (!repoUrl) return alert("Please enter a GitHub repository URL");
 
     try {
-      const response = await axios.post("http://localhost:5001/analyze", { repo_url: repoUrl });
+      const response = await axios.post("http://localhost:5005/analyze", { repo_url: repoUrl });
       setCoverage(response.data.coverage);
     } catch (error) {
       console.error("Error analyzing repository:", error);
