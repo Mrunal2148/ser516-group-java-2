@@ -36,17 +36,11 @@ export default function AddProject() {
           return response.json(); // Ensure the response is parsed as JSON
         })
         .then((data) => {
-          try {
-            const jsonData = JSON.parse(data);  
-            console.log("Links saved:", jsonData.message);
-            fetch("http://127.0.0.1:5005/links.json")
-              .then((response) => response.json())
-              .then((data) => setLinks(data))
-              .catch((error) => console.error("Error fetching links:", error));
-          } catch (error) {
-            console.error("Error parsing JSON:", error);
-            console.error("Response was:", data);  
-          }
+          console.log("Links saved:", data.message);
+          fetch("http://127.0.0.1:5005/links.json")
+            .then((response) => response.json())
+            .then((data) => setLinks(data))
+            .catch((error) => console.error("Error fetching links:", error));
         })
         .catch((error) => {
           console.error("There was a problem with the fetch operation:", error);
