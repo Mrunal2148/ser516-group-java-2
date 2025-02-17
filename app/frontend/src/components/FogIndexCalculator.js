@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { Line } from "react-chartjs-2";
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import './css/Spinner.css';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const FogIndexCalculator = () => {
   const location = useLocation();
@@ -10,6 +14,7 @@ const FogIndexCalculator = () => {
   const [loading, setLoading] = useState(null);
   const [history, setHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [showChart, setShowChart] = useState(false);
 
   useEffect(() => {
     if (location.state?.githubUrl) {
@@ -107,6 +112,24 @@ const FogIndexCalculator = () => {
     );
   };
 
+  const renderChart = () => {
+    if (history.length === 0) return null;
+
+    const data = {
+      labels: history.map(item => new Date(item.generatedTime).toLocaleString()),
+      datasets: [
+        {
+          label: "Fog Index",
+          data: history.map(item => item.fogIndex),
+          fill: false,
+          borderColor: "blue",
+        },
+      ],
+    };
+
+    return <Line data={data} />;
+  };
+
   return (
     <div>
       <h2>Fog Index Calculator</h2>
@@ -131,6 +154,7 @@ const FogIndexCalculator = () => {
         </div>
       )}
       <div>
+        <br/>
         <button onClick={() => {
           setShowHistory(!showHistory);
           if (!showHistory) {
@@ -143,6 +167,23 @@ const FogIndexCalculator = () => {
           <div>
             <h3>History</h3>
             {renderHistory()}
+          </div>
+        )}
+      </div>
+      <div>
+        <br/>
+        <button onClick={() => {
+          setShowChart(!showChart);
+          if (!showChart) {
+            fetchHistory(githubUrl);
+          }
+        }}>
+          {showChart ? "Hide" : "Generate"} Chart
+        </button>
+        {showChart && (
+          <div>
+            <h3>Fog Index Over Time</h3>
+            {renderChart()}
           </div>
         )}
       </div>
