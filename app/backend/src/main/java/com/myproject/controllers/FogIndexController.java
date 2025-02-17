@@ -73,6 +73,31 @@ public class FogIndexController {
         }
     }
 
+    @GetMapping("/history")
+    public ResponseEntity<List<Map<String, Object>>> getFogIndexHistory(@RequestParam String repoUrl) {
+        try {
+            List<Map<String, Object>> repoList = loadExistingData();
+
+            Map<String, Object> repoEntry = repoList.stream()
+                .filter(repo -> repo.get("repo").equals(repoUrl))
+                .findFirst()
+                .orElse(null);
+
+            if (repoEntry == null) {
+                return ResponseEntity.ok(Collections.emptyList());
+            }
+
+            List<Map<String, Object>> history = (List<Map<String, Object>>) repoEntry.get("history");
+            return ResponseEntity.ok(history);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to fetch the history");
+            errorResponse.put("details", e.getMessage());
+
+            return ResponseEntity.status(500).body(Collections.singletonList(errorResponse));
+        }
+    }
+
     private List<Map<String, Object>> loadExistingData() {
         try {
             File file = new File(DATA_FILE);
