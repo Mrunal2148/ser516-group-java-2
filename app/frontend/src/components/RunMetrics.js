@@ -26,7 +26,7 @@ const RunMetrics = () => {
   
     switch (selectedMetric) {
       case "fog-index":
-        navigate("/fogindex", { state: { owner, repo } });
+        navigate("/fogindex", { state: { githubUrl: selectedLink } });
         break;
       case "code-comment-coverage":
         navigate("/codecomment", { state: { owner, repo } });
