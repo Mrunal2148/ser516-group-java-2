@@ -58,6 +58,13 @@ public class FogIndexCalculator {
     private void downloadAndExtractZip(String fileUrl, String outputDir) throws IOException {
         System.out.println("🔍 Downloading ZIP from: " + fileUrl);
 
+        // ✅ Ensure old files are removed before extracting a new ZIP
+        File dir = new File(outputDir);
+        if (dir.exists()) {
+            deleteFolder(dir); // 🔥 This deletes everything in github_project/
+        }
+        dir.mkdirs(); // Recreate the folder after deletion
+
         URL url = new URL(fileUrl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
@@ -74,11 +81,6 @@ public class FogIndexCalculator {
         }
 
         InputStream inputStream = conn.getInputStream();
-        File dir = new File(outputDir);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
 
         ZipInputStream zipIn = new ZipInputStream(inputStream);
         ZipEntry entry;
@@ -100,7 +102,16 @@ public class FogIndexCalculator {
             zipIn.closeEntry();
         }
         zipIn.close();
+    }
 
+    // ✅ Helper method to delete folder and all its contents
+    private void deleteFolder(File folder) {
+        if (folder.isDirectory()) {
+            for (File file : folder.listFiles()) {
+                deleteFolder(file);
+            }
+        }
+        folder.delete();
     }
 
     private List<File> getTextFiles(File dir) {
@@ -115,6 +126,7 @@ public class FogIndexCalculator {
                 }
             }
         }
+        System.out.println("🔍 Texfiles ZIP from: " + textFiles.size());
         return textFiles;
     }
 
