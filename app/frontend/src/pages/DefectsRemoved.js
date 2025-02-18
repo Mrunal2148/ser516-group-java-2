@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import DefectMetricsChart from "../components/DefectMetricsChart";
-import "../components/css/DefectsRemoved.css";
+import "../components/css/DefectsRemoved.css"; 
 
 const DefectsRemoved = () => {
   const location = useLocation();
   const { owner, repo } = location.state || {};
 
   const [bugStats, setBugStats] = useState(null);
-  const [showGraph, setShowGraph] = useState(false);
+  const [showGraph, setShowGraph] = useState(false); // Toggle state for graph
 
   useEffect(() => {
     if (!owner || !repo) return;
@@ -18,53 +18,49 @@ const DefectsRemoved = () => {
       .then((data) => setBugStats(data))
       .catch((error) => console.error("Error fetching bug statistics:", error));
   }, [owner, repo]);
-  const getStartAndEndDates = () => {
-    if (!bugStats) return { startDate: "N/A", endDate: "N/A" };
-  
-    const allWeeks = Object.keys(bugStats.weeklyOpenedBugs || {});
-    if (allWeeks.length === 0) return { startDate: "N/A", endDate: "N/A" };
-  
-    const sortedWeeks = allWeeks.sort();
-    
-
-    const formatWeek = (week) => week.replace("W", "Week-");
-  
-    return {
-      startDate: formatWeek(sortedWeeks[0]),   
-      endDate: formatWeek(sortedWeeks[sortedWeeks.length - 1]),
-    };
-  };
-
-  const { startDate, endDate } = getStartAndEndDates();
 
   return (
     <div className="defects-container">
       <h2>Defects Removed Metrics</h2>
-
       {bugStats ? (
-        <div>
+        <>
           <table className="defects-table">
             <thead>
               <tr>
                 <th>Total Opened Bugs</th>
                 <th>Total Closed Bugs</th>
-                <th>Start Date</th>
-                <th>End Date</th>
+                <th>Start Week</th>
+                <th>End Week</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>{bugStats.totalOpenedBugs}</td>
                 <td>{bugStats.totalClosedBugs}</td>
-                <td>{startDate}</td>
-                <td>{endDate}</td>
+                <td>
+                  {bugStats.weeklyOpenedBugs
+                    ? `2024-Week-${Object.keys(bugStats.weeklyOpenedBugs)[0].split("-W")[1]}`
+                    : "N/A"}
+                </td>
+                <td>
+                  {bugStats.weeklyClosedBugs
+                    ? `2024-Week-${Object.keys(bugStats.weeklyClosedBugs).slice(-1)[0].split("-W")[1]}`
+                    : "N/A"}
+                </td>
               </tr>
             </tbody>
           </table>
 
+          <button className="show-graph-button" onClick={() => setShowGraph(!showGraph)}>
+            {showGraph ? "Hide Graph" : "Show Graph"}
+          </button>
 
-
-        </div>
+          {showGraph && (
+            <div className="graph-container">
+              <DefectMetricsChart data={bugStats} />
+            </div>
+          )}
+        </>
       ) : (
         <p>Loading bug statistics...</p>
       )}
