@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import FogIndexChart from "./FogIndexChart";
+import FogIndexChart from "../components/FogIndexChart";
 import "./css/FogIndexCalculator.css";
 
 const FogIndexCalculator = () => {
