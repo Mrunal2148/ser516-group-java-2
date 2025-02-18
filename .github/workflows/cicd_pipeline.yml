@@ -27,9 +27,9 @@ jobs:
       
       - name: Run Unit Tests
         run: |
-          docker run --rm app-python-backend pytest
+          docker run --rm app-python-backend sh -c "pip install pytest && pytest"
           docker run --rm app-java-backend mvn test
-          docker run --rm app-frontend npm test
+          docker run --rm app-frontend npm test -- --watchAll=false
       
       - name: Log in to Docker Hub
         run: |
