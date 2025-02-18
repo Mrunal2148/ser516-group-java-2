@@ -7,7 +7,7 @@ export default function AddProject() {
   const [newLink, setNewLink] = useState("");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/links.json") // Ensure this path is correct
+    fetch("http://127.0.0.1:5005/links.json") // Ensure this path is correct
       .then((response) => response.json())
       .then((data) => setLinks(data))
       .catch((error) => console.error("Error fetching links:", error));
@@ -20,7 +20,7 @@ export default function AddProject() {
       setLinks(updatedLinks);
       setNewLink("");
   
-      fetch("http://127.0.0.1:5000/save-links", {
+      fetch("http://127.0.0.1:5005/save-links", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -33,19 +33,14 @@ export default function AddProject() {
             throw new Error(`Network response was not ok: ${response.statusText}`);
           }
           
+          return response.json(); // Ensure the response is parsed as JSON
         })
         .then((data) => {
-          try {
-            const jsonData = JSON.parse(data);  
-            console.log("Links saved:", jsonData.message);
-            fetch("http://127.0.0.1:5000/links.json")
-              .then((response) => response.json())
-              .then((data) => setLinks(data))
-              .catch((error) => console.error("Error fetching links:", error));
-          } catch (error) {
-            console.error("Error parsing JSON:", error);
-            console.error("Response was:", data);  
-          }
+          console.log("Links saved:", data.message);
+          fetch("http://127.0.0.1:5005/links.json")
+            .then((response) => response.json())
+            .then((data) => setLinks(data))
+            .catch((error) => console.error("Error fetching links:", error));
         })
         .catch((error) => {
           console.error("There was a problem with the fetch operation:", error);

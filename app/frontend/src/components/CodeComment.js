@@ -1,36 +1,36 @@
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useState } from "react";
 import axios from "axios";
 
-export default function CodeComment() {
-  const location = useLocation();
-  const { githubUrl } = location.state || {};
+export default function CodeCoverage() {
+  const [repoUrl, setRepoUrl] = useState("");
   const [coverage, setCoverage] = useState(null);
 
-  useEffect(() => {
-    if (!githubUrl) return;
+  const handleAnalyze = async () => {
+    if (!repoUrl) return alert("Please enter a GitHub repository URL");
 
-    const analyzeCoverage = async () => {
-      try {
-        const response = await axios.post("http://localhost:5001/analyze", { repo_url: githubUrl });
-        setCoverage(response.data.coverage);
-      } catch (error) {
-        console.error("Error analyzing repository:", error);
-      }
-    };
-
-    analyzeCoverage();
-  }, [githubUrl]);
+    try {
+      const response = await axios.post("http://localhost:5005/analyze", { repo_url: repoUrl });
+      setCoverage(response.data.coverage);
+    } catch (error) {
+      console.error("Error analyzing repository:", error);
+    }
+  };
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-2">Code Comment Coverage</h2>
-      <p><b>Repository:</b> {githubUrl}</p>
-
-      {coverage !== null ? (
+      <h2 className="text-xl font-bold mb-2">GitHub Code Comment Coverage</h2>
+      <input 
+        type="text" 
+        placeholder="Enter GitHub repo URL..." 
+        value={repoUrl} 
+        onChange={(e) => setRepoUrl(e.target.value)}
+        className="border p-2 w-full mb-2"
+      />
+      <button onClick={handleAnalyze} className="bg-blue-500 text-white px-4 py-2 rounded">
+        Analyze
+      </button>
+      {coverage !== null && (
         <p className="mt-4 text-lg">Comment Coverage: <b>{coverage.toFixed(2)}%</b></p>
-      ) : (
-        <p className="mt-4 text-lg">Analyzing coverage...</p>
       )}
     </div>
   );
