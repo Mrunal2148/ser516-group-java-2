@@ -58,10 +58,14 @@ public class FogIndexController {
                 history.add(historyEntry);
             }
 
+            // Truncate /archive/refs/heads/main.zip from the URL before saving
+            String truncatedRepoName = repoName.replace("/archive/refs/heads/main.zip", "");
+            existingRepo.put("repo", truncatedRepoName);
+
             // Save back to file
             saveData(repoList);
 
-            result.put("repo", repoName);
+            result.put("repo", truncatedRepoName);
             result.put("message", "Calculation successful");
             return ResponseEntity.ok(result);
         } catch (Exception e) {

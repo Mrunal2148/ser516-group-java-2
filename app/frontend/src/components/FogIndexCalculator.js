@@ -13,6 +13,7 @@ const FogIndexCalculator = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(null);
   const [history, setHistory] = useState([]);
+  const [benchmarkHistory, setBenchmarkHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
   const [showChart, setShowChart] = useState(false);
 
@@ -53,11 +54,29 @@ const FogIndexCalculator = () => {
 
   const fetchHistory = async (url) => {
     try {
-      const response = await fetch(`http://127.0.0.1:8080/api/fog-index/history?repoUrl=${encodeURIComponent(url)}`);
+      const truncatedUrl = url.replace("/archive/refs/heads/main.zip", "");
+      const response = await fetch(`http://127.0.0.1:8080/api/fog-index/history?repoUrl=${encodeURIComponent(truncatedUrl)}`);
       const data = await response.json();
       setHistory(data);
     } catch (error) {
       console.error("Error fetching history:", error);
+    }
+  };
+
+  const fetchBenchmarkHistory = async (url, metric) => {
+    try {
+      const response = await fetch("http://127.0.0.1:5005/benchmarks.json");
+      const data = await response.json();
+      console.log("Fetched benchmark data:", data);
+      const benchmark = data.find(b => b.repoUrl === url && b.metric === metric);
+      if (benchmark) {
+        console.log("Benchmark history:", benchmark.history);
+        setBenchmarkHistory(benchmark.history);
+      } else {
+        console.log("No matching benchmark found");
+      }
+    } catch (error) {
+      console.error("Error fetching benchmark history:", error);
     }
   };
 
@@ -127,6 +146,15 @@ const FogIndexCalculator = () => {
       ],
     };
 
+    if (benchmarkHistory.length > 0) {
+      data.datasets.push({
+        label: "Benchmark Fog Index",
+        data: benchmarkHistory.map(item => item.value),
+        fill: false,
+        borderColor: "orange",
+      });
+    }
+
     return <Line data={data} />;
   };
 
@@ -176,6 +204,7 @@ const FogIndexCalculator = () => {
           setShowChart(!showChart);
           if (!showChart) {
             fetchHistory(githubUrl);
+            fetchBenchmarkHistory(githubUrl.replace("/archive/refs/heads/main.zip", ""), "fog-index");
           }
         }}>
           {showChart ? "Hide" : "Generate"} Chart

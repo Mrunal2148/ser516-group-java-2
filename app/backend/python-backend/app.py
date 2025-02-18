@@ -156,6 +156,18 @@ def save_benchmark():
 
     return jsonify({"message": "Benchmark saved successfully!"}), 200
 
+@app.route("/benchmarks.json", methods=["GET"])
+def get_benchmarks():
+    benchmark_file = "benchmarks.json"
+    if os.path.exists(benchmark_file):
+        with open(benchmark_file, "r") as file:
+            try:
+                benchmarks = json.load(file)
+                return jsonify(benchmarks), 200
+            except json.JSONDecodeError:
+                return jsonify({"error": "Failed to read benchmarks.json"}), 500
+    return jsonify([]), 200  # Empty list if the file doesn't exist
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5005)
