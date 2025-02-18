@@ -134,26 +134,43 @@ const FogIndexCalculator = () => {
   const renderChart = () => {
     if (history.length === 0) return null;
 
+    const historyData = history.map(item => ({
+      time: new Date(item.generatedTime).toLocaleString(),
+      value: item.fogIndex
+    }));
+
+    const benchmarkData = benchmarkHistory.map(item => ({
+      time: new Date(item.time).toLocaleString(),
+      value: item.value
+    }));
+
+    const labels = [...new Set([...historyData.map(item => item.time), ...benchmarkData.map(item => item.time)])].sort();
+
     const data = {
-      labels: history.map(item => new Date(item.generatedTime).toLocaleString()),
+      labels,
       datasets: [
         {
           label: "Fog Index",
-          data: history.map(item => item.fogIndex),
+          data: labels.map(label => {
+            const item = historyData.find(d => d.time === label);
+            return item ? item.value : null;
+          }),
           fill: false,
           borderColor: "blue",
+          spanGaps: true,
+        },
+        {
+          label: "Benchmark Fog Index",
+          data: labels.map(label => {
+            const item = benchmarkData.find(d => d.time === label);
+            return item ? item.value : null;
+          }),
+          fill: false,
+          borderColor: "orange",
+          spanGaps: true,
         },
       ],
     };
-
-    if (benchmarkHistory.length > 0) {
-      data.datasets.push({
-        label: "Benchmark Fog Index",
-        data: benchmarkHistory.map(item => item.value),
-        fill: false,
-        borderColor: "orange",
-      });
-    }
 
     return <Line data={data} />;
   };
