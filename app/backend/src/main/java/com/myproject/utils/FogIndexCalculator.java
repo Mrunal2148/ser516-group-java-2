@@ -1,8 +1,9 @@
 package com.myproject.utils;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -14,6 +15,9 @@ import java.util.zip.ZipInputStream;
 @Service
 public class FogIndexCalculator {
 
+    @Value("${github.token}")
+    private String GITHUB_TOKEN;
+
     private static final List<String> TEXT_FILE_EXTENSIONS = Arrays.asList(
             ".java", ".txt", ".md", ".xml", ".json", ".html", ".csv");
 
@@ -23,22 +27,18 @@ public class FogIndexCalculator {
         List<File> textFiles = getTextFiles(new File(outputDir));
 
         int totalFiles = textFiles.size();
-        int totalWords = 0;
-        int totalSentences = 0;
-        int totalComplexWords = 0;
-        double totalFogIndex = 0;
+        int totalWords = 0, totalSentences = 0, totalComplexWords = 0;
 
         for (File file : textFiles) {
             String content = readFile(file);
             Map<String, Double> fileMetrics = calculateMetrics(content);
-            totalFogIndex += fileMetrics.get("fogIndex");
             totalWords += fileMetrics.get("totalWords").intValue();
             totalSentences += fileMetrics.get("totalSentences").intValue();
             totalComplexWords += fileMetrics.get("complexWords").intValue();
         }
 
-        double averageSentenceLength = (totalSentences == 0) ? 0 : (double) totalWords / totalSentences;
-        double percentageComplexWords = (totalWords == 0) ? 0 : ((double) totalComplexWords / totalWords) * 100;
+        double averageSentenceLength = totalSentences == 0 ? 0 : (double) totalWords / totalSentences;
+        double percentageComplexWords = totalWords == 0 ? 0 : ((double) totalComplexWords / totalWords) * 100;
         double finalFogIndex = 0.4 * (averageSentenceLength + percentageComplexWords);
 
         Map<String, Object> finalMetrics = new HashMap<>();
@@ -56,15 +56,31 @@ public class FogIndexCalculator {
     }
 
     private void downloadAndExtractZip(String fileUrl, String outputDir) throws IOException {
+        System.out.println("🔍 Downloading ZIP from: " + fileUrl);
+
+        // ✅ Ensure old files are removed before extracting a new ZIP
+        File dir = new File(outputDir);
+        if (dir.exists()) {
+            deleteFolder(dir); // 🔥 This deletes everything in github_project/
+        }
+        dir.mkdirs(); // Recreate the folder after deletion
+
         URL url = new URL(fileUrl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
-        InputStream inputStream = conn.getInputStream();
 
-        File dir = new File(outputDir);
-        if (!dir.exists()) {
-            dir.mkdirs();
+        if (GITHUB_TOKEN != null && !GITHUB_TOKEN.isEmpty()) {
+            conn.setRequestProperty("Authorization", "token " + GITHUB_TOKEN);
         }
+
+        conn.setRequestProperty("Accept", "application/vnd.github.v3.raw");
+
+        int responseCode = conn.getResponseCode();
+        if (responseCode != 200) {
+            throw new IOException("GitHub API error: " + responseCode);
+        }
+
+        InputStream inputStream = conn.getInputStream();
 
         ZipInputStream zipIn = new ZipInputStream(inputStream);
         ZipEntry entry;
@@ -88,6 +104,16 @@ public class FogIndexCalculator {
         zipIn.close();
     }
 
+    // ✅ Helper method to delete folder and all its contents
+    private void deleteFolder(File folder) {
+        if (folder.isDirectory()) {
+            for (File file : folder.listFiles()) {
+                deleteFolder(file);
+            }
+        }
+        folder.delete();
+    }
+
     private List<File> getTextFiles(File dir) {
         List<File> textFiles = new ArrayList<>();
         File[] files = dir.listFiles();
@@ -100,6 +126,7 @@ public class FogIndexCalculator {
                 }
             }
         }
+        System.out.println("🔍 Texfiles ZIP from: " + textFiles.size());
         return textFiles;
     }
 
@@ -184,18 +211,5 @@ public class FogIndexCalculator {
             count--;
         }
         return count > 0 ? count : 1;
-    }
-
-    // For testing purposes.
-    public static void main(String[] args) {
-        FogIndexCalculator calculator = new FogIndexCalculator();
-        try {
-            // Replace with a valid GitHub ZIP URL.
-            String githubZipUrl = "https://github.com/user/repo/archive/main.zip";
-            String jsonResult = calculator.calculateFromGitHub(githubZipUrl);
-            System.out.println(jsonResult);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
