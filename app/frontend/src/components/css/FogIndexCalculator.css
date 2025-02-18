@@ -1,0 +1,57 @@
+.fog-index-container {
+    width: 80%;
+    margin: auto;
+    text-align: center;
+    padding: 20px;
+}
+
+.fog-index-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.fog-index-table th, .fog-index-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+
+.fog-index-table th {
+    background-color: #007bff;
+    color: white;
+    text-transform: uppercase;
+}
+
+.fog-index-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.fog-index-table tr:hover {
+    background-color: #ddd;
+}
+
+.show-graph-button {
+    margin-top: 20px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.show-graph-button:hover {
+    background-color: #218838;
+}
+
+.show-graph-button:active {
+    transform: scale(0.95);
+}
+
+.graph-container {
+    margin-top: 30px;
+}
