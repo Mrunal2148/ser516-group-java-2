@@ -28,16 +28,18 @@ public class FogIndexController {
             // Now the service returns a JSON string instead of a double.
             String jsonResult = calculator.calculateFromGitHub(githubZipUrl);
 
+            // Truncate /archive/refs/heads/main.zip from the URL before saving
+            String truncatedRepoName = githubZipUrl.replace("/archive/refs/heads/main.zip", "");
+
             // Convert JSON string to Map
             Map<String, Object> result = mapper.readValue(jsonResult, Map.class);
-            String repoName = githubZipUrl;
 
             // Load existing history
             List<Map<String, Object>> repoList = loadExistingData();
 
             // Check if repo exists
             Map<String, Object> existingRepo = repoList.stream()
-                .filter(repo -> repo.get("repo").equals(repoName))
+                .filter(repo -> repo.get("repo").equals(truncatedRepoName))
                 .findFirst()
                 .orElse(null);
 
@@ -49,7 +51,7 @@ public class FogIndexController {
             if (existingRepo == null) {
                 // Create new repo entry
                 Map<String, Object> newRepoEntry = new HashMap<>();
-                newRepoEntry.put("repo", repoName);
+                newRepoEntry.put("repo", truncatedRepoName);
                 newRepoEntry.put("history", new ArrayList<>(Collections.singletonList(historyEntry)));
                 repoList.add(newRepoEntry);
             } else {
@@ -58,8 +60,6 @@ public class FogIndexController {
                 history.add(historyEntry);
             }
 
-            // Truncate /archive/refs/heads/main.zip from the URL before saving
-            String truncatedRepoName = repoName.replace("/archive/refs/heads/main.zip", "");
             existingRepo.put("repo", truncatedRepoName);
 
             // Save back to file
