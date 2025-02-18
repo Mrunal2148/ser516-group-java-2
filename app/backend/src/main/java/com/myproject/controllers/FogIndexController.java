@@ -60,8 +60,6 @@ public class FogIndexController {
                 history.add(historyEntry);
             }
 
-            existingRepo.put("repo", truncatedRepoName);
-
             // Save back to file
             saveData(repoList);
 
