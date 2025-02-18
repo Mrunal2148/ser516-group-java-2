@@ -21,9 +21,9 @@ jobs:
       
       - name: Build and Tag Docker Images
         run: |
-          docker build -t app-python-backend ./python-backend
-          docker build -t app-java-backend ./java-backend
-          docker build -t app-frontend ./frontend
+          docker build -t app-python-backend ./app/backend/python-backend
+          docker build -t app-java-backend ./app/backend
+          docker build -t app-frontend ./app/frontend
       
       - name: Run Unit Tests
         run: |
