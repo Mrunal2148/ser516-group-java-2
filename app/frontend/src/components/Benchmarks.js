@@ -12,7 +12,7 @@ const Benchmarks = () => {
 
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/links.json")
+    fetch("http://127.0.0.1:5005/links.json")
       .then((response) => response.json())
       .then((data) => setLinks(data))
       .catch((error) => console.error("Error fetching links:", error));
@@ -32,7 +32,7 @@ const Benchmarks = () => {
     };
 
 
-    fetch("http://127.0.0.1:5000/save-benchmark", {
+    fetch("http://127.0.0.1:5005/save-benchmark", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
