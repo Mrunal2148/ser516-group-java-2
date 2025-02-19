@@ -2,15 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import CoverageDashboard from "./CoverageDashboard";
-import Benchmarks from "./Benchmarks"; 
 import "../components/css/CodeComment.css";
 
 export default function CodeComment() {
   const location = useLocation();
-  const { githubUrl, metric } = location.state || {}; 
+  const { githubUrl } = location.state || {};
   const [coverage, setCoverage] = useState(null);
-  const [selectedGraph, setSelectedGraph] = useState("");
-  const [showBenchmarkModal, setShowBenchmarkModal] = useState(false); 
+  const [selectedGraph, setSelectedGraph] = useState(""); // Selected chart type
 
   useEffect(() => {
     if (!githubUrl) return;
@@ -29,8 +27,8 @@ export default function CodeComment() {
 
   return (
     <div className="code-comment-container">
-      <h2 className="code-comment-title">Code Comment Coverage</h2>
-      <p className="code-comment-repo"><b>Repository:</b> {githubUrl}</p>
+        <h2 className="code-comment-title">Code Comment Coverage</h2>
+    <p className="code-comment-repo"><b>Repository:</b> {githubUrl}</p>
 
       {coverage !== null ? (
         <>
@@ -49,40 +47,22 @@ export default function CodeComment() {
             </tbody>
           </table>
 
+          {/* 📌 Dropdown for selecting chart */}
           <div className="chart-dropdown-container">
-            <div className="dropdown-section">
-              <select onChange={(e) => setSelectedGraph(e.target.value)} className="chart-select">
-                <option value="">Select Graph Type</option>
-                <option value="coverageGraph">Coverage Graph</option>
-                <option value="placeholder1">Placeholder Chart 1</option>
-                <option value="placeholder2">Placeholder Chart 2</option>
-              </select>
-            </div>
+            <select onChange={(e) => setSelectedGraph(e.target.value)} className="chart-select">
+              <option value="">Select Graph Type </option>
+              <option value="coverageGraph">Coverage Graph</option>
+              <option value="placeholder1">Placeholder Chart 1</option>
+              <option value="placeholder2">Placeholder Chart 2</option>
+            </select>
           </div>
 
-          <div className="benchmark-section">
-            <button 
-              className="add-benchmark-button" 
-              onClick={() => setShowBenchmarkModal(true)}
-            >
-              Add Benchmark
-            </button>
-          </div>
-
+          {/* 📌 Graph Rendering Section (OUTSIDE the dropdown) */}
           {selectedGraph && (
             <div className="graph-container">
               {selectedGraph === "coverageGraph" && <CoverageDashboard selectedRepo={githubUrl} />}
               {selectedGraph === "placeholder1" && <p>Placeholder for another chart.</p>}
               {selectedGraph === "placeholder2" && <p>Placeholder for yet another chart.</p>}
-            </div>
-          )}
-
-          {showBenchmarkModal && (
-            <div className="benchmark-modal">
-              <div className="benchmark-modal-content">
-                <button className="close-modal" onClick={() => setShowBenchmarkModal(false)}>X</button>
-                <Benchmarks githubUrl={githubUrl} selectedMetric={metric || "code-comment-coverage"} /> 
-              </div>
             </div>
           )}
         </>

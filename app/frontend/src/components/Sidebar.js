@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaHome, FaTachometerAlt, FaCog, FaCalculator, FaChartLine } from 'react-icons/fa';
+import { FaHome, FaTachometerAlt, FaCog, FaCalculator } from 'react-icons/fa';
 
 const Sidebar = () => {
   return (

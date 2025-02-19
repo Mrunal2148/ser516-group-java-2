@@ -6,5 +6,3 @@ github_project/*
 target/
 target/*
 links.json
-benchmarks.json
-fog_index_data.json
