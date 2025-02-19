@@ -1,4 +1,4 @@
-/* 📌 Main Container */
+
 .code-comment-container {
     width: 80%;
     margin: auto;
@@ -6,7 +6,6 @@
     padding: 20px;
 }
 
-/* 📌 Styled Table */
 .code-comment-table {
     width: 100%;
     border-collapse: collapse;
@@ -34,46 +33,6 @@
     background-color: #ddd;
 }
 
-/* 📌 Dropdown Container */
-.chart-dropdown-container {
-    margin-top: 20px;
-}
-
-/* 📌 Styled Dropdown Button */
-.chart-select {
-    padding: 12px;
-    font-size: 16px;
-    font-weight: bold;
-    color: white;
-    background-color: #28a745;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s ease, transform 0.2s ease;
-}
-
-/* 📌 Dropdown Icon */
-.chart-select::after {
-    content: " ▼";
-    font-size: 12px;
-}
-
-/* 📌 Hover and Click Effects */
-.chart-select:hover {
-    background-color: #218838;
-    transform: scale(1.05);
-}
-
-.chart-select:focus {
-    outline: none;
-    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
-}
-
-/* 📌 Graph Container */
-.graph-container {
-    margin-top: 30px;
-}
-/* 📌 Title Styling */
 .code-comment-title {
     font-size: 24px;
     font-weight: bold;
@@ -82,7 +41,7 @@
     text-transform: uppercase;
 }
 
-/* 📌 Repository URL Styling */
+
 .code-comment-repo {
     font-size: 16px;
     font-weight: bold;
@@ -93,4 +52,49 @@
     padding: 8px 12px;
     border-radius: 5px;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+.chart-dropdown-container-comment{
+    position: relative;
+    display: inline-block;
+    margin-top: 20px;
+}
+
+
+.select-chart {
+    padding: 12px 0px 12px 12px; 
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease, min-width 0.3s ease;
+    min-width: fit-content; 
+    width: auto; 
+    text-align: center;
+    white-space: nowrap; 
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between; 
+    gap: 10px;
+}
+
+
+/* 📌 Hover and Click Effects */
+.select-chart:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+.select-chart:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+}
+
+/* 📌 Graph Container */
+.graph-container {
+    margin-top: 30px;
 }
