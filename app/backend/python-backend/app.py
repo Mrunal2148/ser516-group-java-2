@@ -13,13 +13,11 @@ CORS(app)
 links_file = 'links.json'
 
 def clone_repo(repo_url: str, repo_path: str):
-    """Clones a GitHub repository to a local directory."""
     if os.path.exists(repo_path):
-        shutil.rmtree(repo_path)  
+        shutil.rmtree(repo_path)
     subprocess.run(["git", "clone", repo_url, repo_path], check=True)
 
 def get_code_files(repo_path: str, extensions=None):
-    """Recursively gets all code files with specified extensions."""
     if extensions is None:
         extensions = [".py", ".js", ".jsx", ".ts", ".java"]
     code_files = []
@@ -30,7 +28,6 @@ def get_code_files(repo_path: str, extensions=None):
     return code_files
 
 def calculate_comment_coverage(files):
-    """Calculates the comment coverage for a list of code files."""
     total_lines = 0
     comment_lines = 0
     comment_patterns = {
@@ -54,7 +51,6 @@ def calculate_comment_coverage(files):
     return total_lines, comment_lines, coverage
 
 def save_to_json(repo_url, total_lines, comment_lines, coverage):
-    """Save the calculated coverage data into a JSON file."""
     data = {
         "repo_url": repo_url,
         "total_lines": total_lines,
@@ -74,7 +70,6 @@ def save_to_json(repo_url, total_lines, comment_lines, coverage):
     else:
         existing_data = []
 
-    
     existing_data.append(data)
 
     with open(file_path, "w") as f:
@@ -89,15 +84,16 @@ def analyze_repository():
         return jsonify({"error": "GitHub repository URL is required"}), 400
 
     repo_name = repo_url.rstrip("/").split("/")[-1]
-    repo_path = f"/tmp/{repo_name}"  
+    repo_path = f"/tmp/{repo_name}"
 
     try:
         clone_repo(repo_url, repo_path)
         code_files = get_code_files(repo_path)
         total_lines, comment_lines, coverage = calculate_comment_coverage(code_files)
+
         save_to_json(repo_url, total_lines, comment_lines, coverage)
 
-        shutil.rmtree(repo_path)  
+        shutil.rmtree(repo_path)
 
         return jsonify({"coverage": coverage})
     except Exception as e:
@@ -108,7 +104,7 @@ def get_coverage_data():
     file_path = "coverage_data.json"
 
     if not os.path.exists(file_path):
-        return jsonify([])  
+        return jsonify([])
 
     with open(file_path, "r") as f:
         try:
@@ -131,7 +127,6 @@ def save_links(links):
     try:
         with open(links_file, 'w') as file:
             json.dump(links, file, indent=4)
-        print("Links saved successfully!")
     except Exception as e:
         print("Error writing to file:", e)
 
