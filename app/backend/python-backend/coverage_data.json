@@ -1,0 +1,37 @@
+[
+    {
+        "repo_url": "https://github.com/Mrunal2148/ser516-group-java-2",
+        "total_lines": 1044,
+        "comment_lines": 15,
+        "coverage": 1.4367816091954022,
+        "timestamp": "2025-02-15T18:10:03.572111"
+    },
+    {
+        "repo_url": "https://github.com/mrunal2148/ser516-group-java-2",
+        "total_lines": 1528,
+        "comment_lines": 11,
+        "coverage": 0.7198952879581152,
+        "timestamp": "2025-02-19T00:12:28.512049"
+    },
+    {
+        "repo_url": "https://www.github.com/mrunal2148/rca-app",
+        "total_lines": 734,
+        "comment_lines": 2,
+        "coverage": 0.2724795640326975,
+        "timestamp": "2025-02-19T00:13:26.952179"
+    },
+    {
+        "repo_url": "https://www.github.com/mrunal2148/rca-app",
+        "total_lines": 734,
+        "comment_lines": 2,
+        "coverage": 0.2724795640326975,
+        "timestamp": "2025-02-19T00:22:18.634399"
+    },
+    {
+        "repo_url": "https://www.github.com/mrunal2148/rca-app",
+        "total_lines": 734,
+        "comment_lines": 2,
+        "coverage": 0.2724795640326975,
+        "timestamp": "2025-02-19T00:22:39.717631"
+    }
+]

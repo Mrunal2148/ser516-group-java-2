@@ -1,58 +1,47 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import RepoDropdown from "./RepoDropdown";
 import CoverageChart from "./CoverageChart";
 
-const CoverageDashboard = () => {
-    const [repositories, setRepositories] = useState([]);
-    const [selectedRepo, setSelectedRepo] = useState(null);
+const CoverageDashboard = ({ selectedRepo }) => {
     const [chartData, setChartData] = useState([]);
 
-    // Fetch stored repository data from Flask
     useEffect(() => {
-        const fetchData = async () => {
+        if (!selectedRepo) return; 
+
+        const fetchCoverageData = async () => {
             try {
-                const response = await axios.get("http://localhost:5001/get_coverage_data");
-                setRepositories(response.data);
-                if (response.data.length > 0) {
-                    setSelectedRepo(response.data[0].repo_url);
+                const response = await axios.get("http://localhost:5005/get_coverage_data");
+                const normalizeUrl = (url) => url.trim().replace(/\/$/, "").toLowerCase();
+                const normalizedSelectedRepo = normalizeUrl(selectedRepo);
+                const repoData = response.data.find(repo => 
+                    normalizeUrl(repo.repo_url) === normalizedSelectedRepo
+                );
+
+                if (repoData) {
+                    setChartData([
+                        { name: "Total Lines", value: repoData.total_lines },
+                        { name: "Comment Lines", value: repoData.comment_lines },
+                        { name: "Coverage %", value: repoData.coverage },
+                    ]);
+                } else {
+                    setChartData([]);
                 }
             } catch (error) {
-                console.error("Error fetching repository data:", error);
+                console.error("Error fetching coverage data:", error);
             }
         };
 
-        fetchData();
-    }, []);
-
-    // Update chart data when a repo is selected
-    useEffect(() => {
-        if (selectedRepo) {
-            const repoData = repositories.find(repo => repo.repo_url === selectedRepo);
-            if (repoData) {
-                setChartData([
-                    { name: "Total Lines", value: repoData.total_lines },
-                    { name: "Comment Lines", value: repoData.comment_lines },
-                    { name: "Coverage %", value: repoData.coverage },
-                ]);
-            }
-        }
-    }, [selectedRepo, repositories]);
+        fetchCoverageData();
+    }, [selectedRepo]);
 
     return (
         <div style={{ width: "100%", padding: "20px" }}>
             <h2>Code Comment Coverage Dashboard</h2>
 
-            <RepoDropdown 
-                repositories={repositories} 
-                selectedRepo={selectedRepo} 
-                setSelectedRepo={setSelectedRepo} 
-            />
-
             {chartData.length > 0 ? (
                 <CoverageChart chartData={chartData} />
             ) : (
-                <p>No data available.</p>
+                <p>No coverage data available for this repository.</p>
             )}
         </div>
     );
