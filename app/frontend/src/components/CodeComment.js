@@ -2,47 +2,73 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import CoverageDashboard from "./CoverageDashboard";
+import "../components/css/CodeComment.css";
 
 export default function CodeComment() {
-    const location = useLocation();
-    const { githubUrl } = location.state || {};
-    const [coverage, setCoverage] = useState(null);
-    const [showGraph, setShowGraph] = useState(false);
+  const location = useLocation();
+  const { githubUrl } = location.state || {};
+  const [coverage, setCoverage] = useState(null);
+  const [selectedGraph, setSelectedGraph] = useState(""); // Selected chart type
 
-    useEffect(() => {
-        if (!githubUrl) return;
+  useEffect(() => {
+    if (!githubUrl) return;
 
-        const analyzeCoverage = async () => {
-            try {
-                const response = await axios.post("http://localhost:5005/analyze", { repo_url: githubUrl });
-                setCoverage(response.data.coverage);
-            } catch (error) {
-                console.error("Error analyzing repository:", error);
-            }
-        };
+    const analyzeCoverage = async () => {
+      try {
+        const response = await axios.post("http://localhost:5005/analyze", { repo_url: githubUrl });
+        setCoverage(response.data.coverage);
+      } catch (error) {
+        console.error("Error analyzing repository:", error);
+      }
+    };
 
-        analyzeCoverage();
-    }, [githubUrl]);
+    analyzeCoverage();
+  }, [githubUrl]);
 
-    return (
-        <div className="p-4">
-            <h2 className="text-xl font-bold mb-2">Code Comment Coverage</h2>
-            <p><b>Repository:</b> {githubUrl}</p>
+  return (
+    <div className="code-comment-container">
+        <h2 className="code-comment-title">Code Comment Coverage</h2>
+    <p className="code-comment-repo"><b>Repository:</b> {githubUrl}</p>
 
-            {coverage !== null ? (
-                <>
-                    <p className="mt-4 text-lg">Comment Coverage: <b>{coverage.toFixed(2)}%</b></p>
-                    <button 
-                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                        onClick={() => setShowGraph(!showGraph)}
-                    >
-                        {showGraph ? "Hide Coverage Graph" : "Load Coverage Graph"}
-                    </button>
-                </>
-            ) : (
-                <p className="mt-4 text-lg">Analyzing coverage...</p>
-            )}
-            {showGraph && <CoverageDashboard selectedRepo={githubUrl} />}
-        </div>
-    );
+      {coverage !== null ? (
+        <>
+          <table className="code-comment-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Comment Coverage</td>
+                <td>{coverage.toFixed(2)}%</td>
+              </tr>
+            </tbody>
+          </table>
+
+          {/* 📌 Dropdown for selecting chart */}
+          <div className="chart-dropdown-container">
+            <select onChange={(e) => setSelectedGraph(e.target.value)} className="chart-select">
+              <option value="">Select Graph Type </option>
+              <option value="coverageGraph">Coverage Graph</option>
+              <option value="placeholder1">Placeholder Chart 1</option>
+              <option value="placeholder2">Placeholder Chart 2</option>
+            </select>
+          </div>
+
+          {/* 📌 Graph Rendering Section (OUTSIDE the dropdown) */}
+          {selectedGraph && (
+            <div className="graph-container">
+              {selectedGraph === "coverageGraph" && <CoverageDashboard selectedRepo={githubUrl} />}
+              {selectedGraph === "placeholder1" && <p>Placeholder for another chart.</p>}
+              {selectedGraph === "placeholder2" && <p>Placeholder for yet another chart.</p>}
+            </div>
+          )}
+        </>
+      ) : (
+        <p className="mt-4 text-lg">Analyzing coverage...</p>
+      )}
+    </div>
+  );
 }
