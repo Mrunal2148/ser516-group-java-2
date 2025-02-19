@@ -1,3 +1,4 @@
+
 package com.myproject.controllers;
 
 import com.myproject.services.DefectsRemovedService;
@@ -7,7 +8,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/github")
 public class DefectsRemovedController {
-    
+
     private final DefectsRemovedService defectsRemovedService;
 
     public DefectsRemovedController(DefectsRemovedService defectsRemovedService) {

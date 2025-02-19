@@ -1,41 +1,49 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import './css/Spinner.css';
+import FogIndexChart from "../components/FogIndexChart";
+import "./css/FogIndexCalculator.css";
 
 const FogIndexCalculator = () => {
   const location = useLocation();
-  const [githubUrl, setGithubUrl] = useState(location.state?.githubUrl || "");
+  const { githubUrl } = location.state || {};
+
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [selectedGraph, setSelectedGraph] = useState("");
 
   useEffect(() => {
-    if (location.state?.githubUrl) {
-      setGithubUrl(location.state.githubUrl);
-      calculateFogIndex(location.state.githubUrl);
+    if (githubUrl) {
+      calculateFogIndex(githubUrl);
     }
-  }, [location.state]);
+  }, [githubUrl]);
+
+  const formatGitHubZipUrl = (repoUrl) => {
+    if (!repoUrl) return "";
+    if (repoUrl.endsWith(".zip")) return repoUrl;
+    return repoUrl.replace(/\.git$/, "").replace(/\/$/, "") + "/archive/main.zip";
+  };
 
   const calculateFogIndex = async (url) => {
     try {
       setLoading(true);
       setError(null);
+      const zipUrl = formatGitHubZipUrl(url);
 
       const response = await fetch(
-        `http://127.0.0.1:8080/api/fog-index/calculate?githubZipUrl=${encodeURIComponent(url)}`,
+        `http://127.0.0.1:8080/api/fog-index/calculate?githubZipUrl=${encodeURIComponent(zipUrl)}`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         }
       );
-  
+
       if (!response.ok) {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
-  
+
       const data = await response.json();
       setResult(data);
-      setError(null);
     } catch (error) {
       setError(error.message || "Failed to fetch the Fog Index");
       setResult(null);
@@ -44,56 +52,53 @@ const FogIndexCalculator = () => {
     }
   };
 
-  const formatKey = (key) => {
-    return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-  };
-
-  const renderTable = () => {
-    if (!result) return null;
-
-    const entries = Object.entries(result);
-    const entriesToRender = entries.slice(0, -1); // Don't show 'message' key
-
-    return (
-      <table style={{ borderCollapse: 'collapse'}}>
-        <tbody>
-          {entriesToRender.map(([key, value], index) => (
-            <tr key={key} style={{ borderBottom: '1px solid black' }}>
-              <td style={{ padding: '8px', border: '1px solid black', fontWeight: index === 0 ? 'bold' : 'normal' }}>
-                {formatKey(key)}
-              </td>
-              <td style={{ padding: '8px', border: '1px solid black', fontWeight: index === 0 ? 'bold' : 'normal' }}>
-                {value}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  };
-
   return (
-    <div>
-      <h2>Fog Index Calculator</h2>
-      <input
-        type="text"
-        id="githubUrl"
-        name="githubUrl"
-        value={githubUrl}
-        onChange={(e) => setGithubUrl(e.target.value)}
-        placeholder="Enter GitHub repository URL"
-      />
-      {loading && 
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <div className="spinner"/>
-        <span>&nbsp; &nbsp; Calculating...</span>
-      </div>}
+    <div className="fog-index-container">
+      <h2 lassName="code-comment-title">Fog Index Calculator</h2>
+
+      {githubUrl && (
+        <p className="fog-index-repo">
+          <b>Repository:</b> <a href={githubUrl} target="_blank" rel="noopener noreferrer">{githubUrl}</a>
+        </p>
+      )}
+
+      {loading && <p>Calculating Fog Index...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
+
       {result && (
-        <div>
-          <h3>Calculation Result:</h3>
-          {renderTable()}
-        </div>
+        <>
+          <table className="fog-index-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(result).map(([key, value]) => (
+                <tr key={key}>
+                  <td>{key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}</td>
+                  <td>{value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Styled Dropdown Button */}
+          <div className="chart-dropdown-container">
+            <select onChange={(e) => setSelectedGraph(e.target.value)} className="chart-select">
+              <option value="">Select Graph Type</option>
+              <option value="fogIndex">Fog Index Chart</option>
+              <option value="placeholder1">Placeholder Chart 1</option>
+              <option value="placeholder2">Placeholder Chart 2</option>
+            </select>
+          </div>
+
+          {/* Render Selected Chart */}
+          {selectedGraph === "fogIndex" && <FogIndexChart data={result} />}
+          {selectedGraph === "placeholder1" && <p> Placeholder for another chart.</p>}
+          {selectedGraph === "placeholder2" && <p> Placeholder for yet another chart.</p>}
+        </>
       )}
     </div>
   );

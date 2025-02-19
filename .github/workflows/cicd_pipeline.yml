@@ -1,0 +1,70 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - Project-1
+  pull_request:
+    branches:
+      - Project-1
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Build and Tag Docker Images
+        run: |
+          docker build -t app-python-backend ./app/backend/python-backend
+          docker build -t app-java-backend ./app/backend
+          docker build -t app-frontend ./app/frontend
+
+      - name: Log in to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      
+      - name: Push Images to Docker Hub
+        run: |
+          docker tag app-python-backend ${{ secrets.DOCKER_USERNAME }}/app-python-backend:latest
+          docker tag app-java-backend ${{ secrets.DOCKER_USERNAME }}/app-java-backend:latest
+          docker tag app-frontend ${{ secrets.DOCKER_USERNAME }}/app-frontend:latest
+          
+          docker push ${{ secrets.DOCKER_USERNAME }}/app-python-backend:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/app-java-backend:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/app-frontend:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository  
+        uses: actions/checkout@v3
+
+      - name: Install Docker Compose
+        run: |
+          sudo apt update
+          sudo apt install -y docker-compose
+
+      - name: Verify Directory Structure
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Contents:"
+          ls -la
+
+      - name: Deploy with Docker Compose
+        run: |
+          cd app  
+          
+          docker pull ${{ secrets.DOCKER_USERNAME }}/app-python-backend:latest
+          docker pull ${{ secrets.DOCKER_USERNAME }}/app-java-backend:latest
+          docker pull ${{ secrets.DOCKER_USERNAME }}/app-frontend:latest
+
+          docker-compose down || true
+
+          docker-compose up -d
