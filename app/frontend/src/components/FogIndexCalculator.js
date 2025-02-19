@@ -14,6 +14,7 @@ const FogIndexCalculator = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(null);
   const [history, setHistory] = useState([]);
+  const [benchmarkHistory, setBenchmarkHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
   const [showChart, setShowChart] = useState(false);
 
@@ -59,11 +60,29 @@ const FogIndexCalculator = () => {
 
   const fetchHistory = async (url) => {
     try {
-      const response = await fetch(`http://127.0.0.1:8080/api/fog-index/history?repoUrl=${encodeURIComponent(url)}`);
+      const truncatedUrl = url.replace("/archive/refs/heads/main.zip", "");
+      const response = await fetch(`http://127.0.0.1:8080/api/fog-index/history?repoUrl=${encodeURIComponent(truncatedUrl)}`);
       const data = await response.json();
       setHistory(data);
     } catch (error) {
       console.error("Error fetching history:", error);
+    }
+  };
+
+  const fetchBenchmarkHistory = async (url, metric) => {
+    try {
+      const response = await fetch("http://127.0.0.1:5005/benchmarks.json");
+      const data = await response.json();
+      console.log("Fetched benchmark data:", data);
+      const benchmark = data.find(b => b.repoUrl === url && b.metric === metric);
+      if (benchmark) {
+        console.log("Benchmark history:", benchmark.history);
+        setBenchmarkHistory(benchmark.history);
+      } else {
+        console.log("No matching benchmark found");
+      }
+    } catch (error) {
+      console.error("Error fetching benchmark history:", error);
     }
   };
 
@@ -121,14 +140,40 @@ const FogIndexCalculator = () => {
   const renderChart = () => {
     if (history.length === 0) return null;
 
+    const historyData = history.map(item => ({
+      time: new Date(item.generatedTime).toISOString(),
+      value: item.fogIndex
+    }));
+
+    const benchmarkData = benchmarkHistory.map(item => ({
+      time: new Date(item.time).toISOString(),
+      value: item.value
+    }));
+
+    const labels = [...new Set([...historyData.map(item => item.time), ...benchmarkData.map(item => item.time)])].sort();
+
     const data = {
-      labels: history.map(item => new Date(item.generatedTime).toLocaleString()),
+      labels: labels.map(label => new Date(label).toLocaleString()),
       datasets: [
         {
           label: "Fog Index",
-          data: history.map(item => item.fogIndex),
+          data: labels.map(label => {
+            const item = historyData.find(d => d.time === label);
+            return item ? item.value : null;
+          }),
           fill: false,
           borderColor: "blue",
+          spanGaps: true,
+        },
+        {
+          label: "Benchmark Fog Index",
+          data: labels.map(label => {
+            const item = benchmarkData.find(d => d.time === label);
+            return item ? item.value : null;
+          }),
+          fill: false,
+          borderColor: "orange",
+          spanGaps: true,
         },
       ],
     };
@@ -172,6 +217,7 @@ const FogIndexCalculator = () => {
           setShowChart(!showChart);
           if (!showChart) {
             fetchHistory(githubUrl);
+            fetchBenchmarkHistory(githubUrl.replace("/archive/refs/heads/main.zip", ""), "fog-index");
           }
         }}>
           {showChart ? "Hide" : "Generate"} Chart

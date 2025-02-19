@@ -27,16 +27,18 @@ public class FogIndexController {
             FogIndexCalculator calculator = new FogIndexCalculator();
             String jsonResult = calculator.calculateFromGitHub(githubZipUrl);
 
+            // Truncate /archive/refs/heads/main.zip from the URL before saving
+            String truncatedRepoName = githubZipUrl.replace("/archive/refs/heads/main.zip", "");
+
             // Convert JSON string to Map
             Map<String, Object> result = mapper.readValue(jsonResult, Map.class);
-            String repoName = githubZipUrl;
 
             // Load existing history
             List<Map<String, Object>> repoList = loadExistingData();
 
             // Check if repo exists
             Map<String, Object> existingRepo = repoList.stream()
-                .filter(repo -> repo.get("repo").equals(repoName))
+                .filter(repo -> repo.get("repo").equals(truncatedRepoName))
                 .findFirst()
                 .orElse(null);
 
@@ -48,7 +50,7 @@ public class FogIndexController {
             if (existingRepo == null) {
                 // Create new repo entry
                 Map<String, Object> newRepoEntry = new HashMap<>();
-                newRepoEntry.put("repo", repoName);
+                newRepoEntry.put("repo", truncatedRepoName);
                 newRepoEntry.put("history", new ArrayList<>(Collections.singletonList(historyEntry)));
                 repoList.add(newRepoEntry);
             } else {
@@ -60,7 +62,7 @@ public class FogIndexController {
             // Save back to file
             saveData(repoList);
 
-            result.put("repo", repoName);
+            result.put("repo", truncatedRepoName);
             result.put("message", "Calculation successful");
             return ResponseEntity.ok(result);
         } catch (Exception e) {
