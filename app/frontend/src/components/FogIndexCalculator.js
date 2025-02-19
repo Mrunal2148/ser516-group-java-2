@@ -135,19 +135,19 @@ const FogIndexCalculator = () => {
     if (history.length === 0) return null;
 
     const historyData = history.map(item => ({
-      time: new Date(item.generatedTime).toLocaleString(),
+      time: new Date(item.generatedTime).toISOString(),
       value: item.fogIndex
     }));
 
     const benchmarkData = benchmarkHistory.map(item => ({
-      time: new Date(item.time).toLocaleString(),
+      time: new Date(item.time).toISOString(),
       value: item.value
     }));
 
     const labels = [...new Set([...historyData.map(item => item.time), ...benchmarkData.map(item => item.time)])].sort();
 
     const data = {
-      labels,
+      labels: labels.map(label => new Date(label).toLocaleString()),
       datasets: [
         {
           label: "Fog Index",
