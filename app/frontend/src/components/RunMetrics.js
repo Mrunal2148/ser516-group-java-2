@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Dropdown from "./Dropdown";
+import SelectDropdown from "./Dropdown";
 import "./css/RunMetrics.css";
 
 const RunMetrics = () => {
@@ -10,21 +10,29 @@ const RunMetrics = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/links.json") // Ensure this path is correct
+    fetch("http://127.0.0.1:5005/links.json")
       .then((response) => response.json())
       .then((data) => setLinks(data))
       .catch((error) => console.error("Error fetching links:", error));
   }, []);
-
+  
   const handleRun = () => {
-    const fullLink = `${selectedLink}/archive/refs/heads/main.zip`;
-    if (!selectedMetric) {
-      alert("Please select a metric");
-      return;
-    }
+    if (!selectedLink || !selectedMetric) return;
+  
+    const owner = selectedLink.split("/").slice(-2, -1)[0];
+    const repo = selectedLink.split("/").pop();
+  
+    console.log("Navigating to defectsremoved with:", owner, repo); 
+  
     switch (selectedMetric) {
       case "fog-index":
-        navigate("/fogindex", { state: { githubUrl: fullLink } });
+        navigate("/fogindex", { state: { owner, repo } });
+        break;
+      case "code-comment-coverage":
+        navigate("/codecomment", { state: { owner, repo } });
+        break;
+      case "defects-removed":
+        navigate("/defectsremoved", { state: { owner, repo } });
         break;
       default:
         alert("Invalid metric");
@@ -33,17 +41,34 @@ const RunMetrics = () => {
   };
 
   return (
-    <div>
-      <Dropdown onMetricSelect={setSelectedMetric}/>
-      <label>Select Repository: </label>
-      <select defaultValue="" onChange={(e) => setSelectedLink(e.target.value)}>
-        <option value="" disabled>--Select--</option>
-        {links.slice(1).map((link, index) => (
-          <option key={index} value={link}>{link}</option>
-        ))}
-      </select>
-      &nbsp; &nbsp;
-      <button class="run-button" onClick={handleRun}>Run</button>
+    <div className="run-metrics-container">
+      <h2>Run Metrics Dashboard</h2>
+
+      <SelectDropdown
+        label="Select Repository"
+        options={links.slice(1).map((link) => ({ label: link, value: link }))}
+        selectedValue={selectedLink}
+        onSelect={setSelectedLink}
+      />
+
+      <SelectDropdown
+        label="Select Metric"
+        options={[
+          { label: "Fog Index", value: "fog-index" },
+          { label: "Code Comment Coverage", value: "code-comment-coverage" },
+          { label: "Defects Removed", value: "defects-removed" },
+        ]}
+        selectedValue={selectedMetric}
+        onSelect={setSelectedMetric}
+      />
+
+      <button 
+        className="run-button" 
+        onClick={handleRun} 
+        disabled={!selectedLink || !selectedMetric}
+      >
+        Run
+      </button>
     </div>
   );
 };

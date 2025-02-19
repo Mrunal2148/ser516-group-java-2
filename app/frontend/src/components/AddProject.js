@@ -7,7 +7,7 @@ export default function AddProject() {
   const [newLink, setNewLink] = useState("");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/links.json") // Ensure this path is correct
+    fetch("http://127.0.0.1:5005/links.json") // Ensure this path is correct
       .then((response) => response.json())
       .then((data) => setLinks(data))
       .catch((error) => console.error("Error fetching links:", error));
@@ -20,7 +20,7 @@ export default function AddProject() {
       setLinks(updatedLinks);
       setNewLink("");
   
-      fetch("http://127.0.0.1:5000/save-links", {
+      fetch("http://127.0.0.1:5005/save-links", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -33,19 +33,14 @@ export default function AddProject() {
             throw new Error(`Network response was not ok: ${response.statusText}`);
           }
           
+          return response.json(); // Ensure the response is parsed as JSON
         })
         .then((data) => {
-          try {
-            const jsonData = JSON.parse(data);  
-            console.log("Links saved:", jsonData.message);
-            fetch("http://127.0.0.1:5000/links.json")
-              .then((response) => response.json())
-              .then((data) => setLinks(data))
-              .catch((error) => console.error("Error fetching links:", error));
-          } catch (error) {
-            console.error("Error parsing JSON:", error);
-            console.error("Response was:", data);  
-          }
+          console.log("Links saved:", data.message);
+          fetch("http://127.0.0.1:5005/links.json")
+            .then((response) => response.json())
+            .then((data) => setLinks(data))
+            .catch((error) => console.error("Error fetching links:", error));
         })
         .catch((error) => {
           console.error("There was a problem with the fetch operation:", error);
@@ -56,7 +51,6 @@ export default function AddProject() {
     }
   };
     
-
   return (
     <div className="p-4 grid gap-4 grid-cols-1 md:grid-cols-2">
       <Card>
@@ -67,20 +61,22 @@ export default function AddProject() {
               <li key={index}>{link}</li>
             ))}
           </ul>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <span style={{ color: 'grey' }}>https://github.com/</span>
-            <input
-              type="text"
-              value={newLink}
-              onChange={(e) => setNewLink(e.target.value)}
-              placeholder="user/repo"
-              className="border p-2 mr-2"
-              style={{ flex: 1 }}
-            />
+          <div>
+            <label className="block font-medium mb-1">GitHub Repository</label>
+            <div className="flex items-center">
+              <input
+                type="text"
+                value={newLink}
+                onChange={(e) => setNewLink(e.target.value)}
+                placeholder={newLink ? "" : "user/repo"} // Hides placeholder when typing
+                className="border p-2 mr-2 w-64"
+              />
+              <Button onClick={addLink}>Add Link</Button>
+            </div>
           </div>
-          <Button onClick={addLink}>Add Link</Button>
         </CardContent>
       </Card>
     </div>
   );
+  
 }

@@ -1,26 +1,25 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './css/Dropdown.css';
 
-const Dropdown = ({ onMetricSelect }) => {
-  const [selectedOption, setSelectedOption] = useState('');
-
-  const handleChange = (event) => {
-    const value = event.target.value;
-    setSelectedOption(value);
-    onMetricSelect(value); // Call the callback function with the selected value
-  };
-
+const SelectDropdown = ({ label, options, selectedValue, onSelect }) => {
   return (
-    <div className="dropdown">
-      <label htmlFor="metrics-dropdown">Select Metric: &nbsp;</label>
-      <select id="metrics-dropdown" value={selectedOption} onChange={handleChange}>
+    <div className="input-group">
+      <label htmlFor={label.replace(/\s+/g, '-').toLowerCase()}>{label}:</label>
+      <select
+        id={label.replace(/\s+/g, '-').toLowerCase()}
+        value={selectedValue}
+        onChange={(e) => onSelect(e.target.value)}
+        className="dropdown-select"
+      >
         <option value="">--Select--</option>
-        <option value="fog-index">Fog Index</option>
-        <option value="code-comment-coverage">Code Comment Coverage</option>
-        <option value="defects-removed">Defects Removed</option>
+        {options.map((option, index) => (
+          <option key={index} value={option.value}>
+            {option.label}
+          </option>
+        ))}
       </select>
     </div>
   );
 };
 
-export default Dropdown;
+export default SelectDropdown;
