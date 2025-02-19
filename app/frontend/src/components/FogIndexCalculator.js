@@ -105,3 +105,5 @@ const FogIndexCalculator = () => {
 };
 
 export default FogIndexCalculator;
+
+// comment
