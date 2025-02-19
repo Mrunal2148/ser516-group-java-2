@@ -59,11 +59,8 @@ jobs:
 
       - name: Deploy with Docker Compose
         run: |
-          if [ ! -f "docker-compose.yml" ]; then
-            echo "docker-compose.yml not found! Exiting..."
-            exit 1
-          fi
-
+          cd app  
+          
           docker pull ${{ secrets.DOCKER_USERNAME }}/app-python-backend:latest
           docker pull ${{ secrets.DOCKER_USERNAME }}/app-java-backend:latest
           docker pull ${{ secrets.DOCKER_USERNAME }}/app-frontend:latest
