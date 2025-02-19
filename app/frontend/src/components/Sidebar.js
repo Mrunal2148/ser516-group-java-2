@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaHome, FaTachometerAlt, FaCog, FaCalculator } from 'react-icons/fa';
+import { FaHome, FaTachometerAlt, FaCog, FaCalculator, FaChartLine } from 'react-icons/fa';
 
 const Sidebar = () => {
   return (
@@ -22,6 +22,12 @@ const Sidebar = () => {
           <NavLink to="/runmetric">
             <FaCalculator />
             <span className="icon-text">Run Metrics</span>
+          </NavLink>
+        </li>
+        <li className="sidebar-item">
+          <NavLink to="/benchmarks">
+            <FaChartLine />
+            <span className="icon-text">Benchmarks</span>
           </NavLink>
         </li>
       </ul>
