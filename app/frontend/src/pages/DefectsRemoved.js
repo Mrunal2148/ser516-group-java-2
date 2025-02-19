@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import DefectMetricsChart from "../components/DefectMetricsChart";
 import "../components/css/DefectsRemoved.css";
 
 const DefectsRemoved = () => {

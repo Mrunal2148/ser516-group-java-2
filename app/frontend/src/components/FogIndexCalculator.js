@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import FogIndexChart from "./FogIndexChart";
+import FogIndexChart from "../components/FogIndexChart";
 import "./css/FogIndexCalculator.css";
 
 const FogIndexCalculator = () => {
@@ -14,21 +14,33 @@ const FogIndexCalculator = () => {
 
   useEffect(() => {
     if (githubUrl) {
-      fetchFogIndex(githubUrl);
+      calculateFogIndex(githubUrl);
     }
   }, [githubUrl]);
 
-  const fetchFogIndex = async (url) => {
+  const formatGitHubZipUrl = (repoUrl) => {
+    if (!repoUrl) return "";
+    if (repoUrl.endsWith(".zip")) return repoUrl;
+    return repoUrl.replace(/\.git$/, "").replace(/\/$/, "") + "/archive/main.zip";
+  };
+
+  const calculateFogIndex = async (url) => {
     try {
       setLoading(true);
       setError(null);
+      const zipUrl = formatGitHubZipUrl(url); // Convert to ZIP URL
 
       const response = await fetch(
-        `http://127.0.0.1:8080/api/fog-index/calculate?githubZipUrl=${encodeURIComponent(url)}`,
-        { method: "GET", headers: { "Content-Type": "application/json" } }
+          `http://127.0.0.1:8080/api/fog-index/calculate?githubZipUrl=${encodeURIComponent(zipUrl)}`,
+          {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+          }
       );
 
-      if (!response.ok) throw new Error(`Error: ${response.status} ${response.statusText}`);
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
 
       const data = await response.json();
       setResult(data);

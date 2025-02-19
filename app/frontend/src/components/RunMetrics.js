@@ -22,14 +22,13 @@ const RunMetrics = () => {
     const owner = selectedLink.split("/").slice(-2, -1)[0];
     const repo = selectedLink.split("/").pop();
   
-    console.log("Navigating to defectsremoved with:", owner, repo); 
-  
+    
     switch (selectedMetric) {
       case "fog-index":
-        navigate("/fogindex", { state: { owner, repo } });
+        navigate("/fogindex", { state: { githubUrl: selectedLink } });
         break;
       case "code-comment-coverage":
-        navigate("/codecomment", { state: { owner, repo } });
+        navigate("/codecomment", { state: { githubUrl: selectedLink }});
         break;
       case "defects-removed":
         navigate("/defectsremoved", { state: { owner, repo } });
