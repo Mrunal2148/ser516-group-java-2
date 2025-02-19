@@ -7,7 +7,7 @@ import "../components/css/CodeComment.css";
 
 export default function CodeComment() {
   const location = useLocation();
-  const { githubUrl } = location.state || {};
+  const { githubUrl, metric } = location.state || {}; 
   const [coverage, setCoverage] = useState(null);
   const [selectedGraph, setSelectedGraph] = useState("");
   const [showBenchmarkModal, setShowBenchmarkModal] = useState(false); 
@@ -59,16 +59,16 @@ export default function CodeComment() {
               </select>
             </div>
           </div>
-          <div>
-            <div className="benchmark-section">
-              <button 
-                className="add-benchmark-button" 
-                onClick={() => setShowBenchmarkModal(true)}
-              >
-                Add Benchmark
-              </button>
-            </div>
+
+          <div className="benchmark-section">
+            <button 
+              className="add-benchmark-button" 
+              onClick={() => setShowBenchmarkModal(true)}
+            >
+              Add Benchmark
+            </button>
           </div>
+
           {selectedGraph && (
             <div className="graph-container">
               {selectedGraph === "coverageGraph" && <CoverageDashboard selectedRepo={githubUrl} />}
@@ -76,11 +76,12 @@ export default function CodeComment() {
               {selectedGraph === "placeholder2" && <p>Placeholder for yet another chart.</p>}
             </div>
           )}
+
           {showBenchmarkModal && (
             <div className="benchmark-modal">
               <div className="benchmark-modal-content">
                 <button className="close-modal" onClick={() => setShowBenchmarkModal(false)}>X</button>
-                <Benchmarks githubUrl={githubUrl} /> 
+                <Benchmarks githubUrl={githubUrl} selectedMetric={metric || "code-comment-coverage"} /> 
               </div>
             </div>
           )}

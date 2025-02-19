@@ -1,30 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import SelectDropdown from "./Dropdown";
 import Tooltip from "@mui/material/Tooltip";
 import "./css/RunMetrics.css";
 
-const Benchmarks = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { githubUrl } = location.state || {}; // Retrieve githubUrl for navigation back
-
-  const [links, setLinks] = useState([]);
-  const [selectedLink, setSelectedLink] = useState(githubUrl || ""); // Default to passed repo
-  const [selectedMetric, setSelectedMetric] = useState("");
-  const [benchmarkValue, setBenchmarkValue] = useState("");
-  const [showTooltip, setShowTooltip] = useState(false);
+const Benchmarks = ({ githubUrl, selectedMetric: initialMetric }) => {
+  const [selectedMetric, setSelectedMetric] = useState(initialMetric || "code-comment-coverage");
+  const [benchmarkValue, setBenchmarkValue] = useState(""); 
+  const [showTooltip, setShowTooltip] = useState(false); 
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5005/links.json")
-      .then((response) => response.json())
-      .then((data) => setLinks(data))
-      .catch((error) => console.error("Error fetching links:", error));
-  }, []);
+    console.log("Received githubUrl:", githubUrl);
+    console.log("Received metric:", initialMetric);
+  }, [githubUrl, initialMetric]);
 
   const handleSaveBenchmark = () => {
     const benchmarkData = {
-      repoUrl: selectedLink,
+      repoUrl: githubUrl,
       metric: selectedMetric,
       history: [
         {
@@ -33,6 +23,14 @@ const Benchmarks = () => {
         },
       ],
     };
+
+    console.log("Sending benchmark data:", benchmarkData);
+
+    if (!benchmarkData.repoUrl || !benchmarkData.metric || isNaN(benchmarkData.history[0].value)) {
+      console.error("Invalid data:", benchmarkData);
+      alert("Error: Missing required fields or invalid benchmark value.");
+      return;
+    }
 
     fetch("http://127.0.0.1:5005/save-benchmark", {
       method: "POST",
@@ -43,11 +41,14 @@ const Benchmarks = () => {
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error(`Network response was not ok: ${response.statusText}`);
+          return response.json().then((err) => {
+            console.error("Server error:", err);
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+          });
         }
         return response.json();
       })
-      .then((data) => {
+      .then(() => {
         alert("Benchmark saved successfully!");
       })
       .catch((error) => {
@@ -69,24 +70,8 @@ const Benchmarks = () => {
     <div>
       <h1>Your Own Benchmarks!</h1>
       <div className="run-metrics-container">
-        <SelectDropdown
-          label="Select Repository"
-          options={links.slice(1).map((link) => ({ label: link, value: link }))}
-          selectedValue={selectedLink}
-          onSelect={setSelectedLink}
-        />
-
-        <SelectDropdown
-          label="Select Metric"
-          options={[
-            { label: "Fog Index", value: "fog-index" },
-            { label: "Code Comment Coverage", value: "code-comment-coverage" },
-            { label: "Defects Removed", value: "defects-removed" },
-          ]}
-          selectedValue={selectedMetric}
-          onSelect={setSelectedMetric}
-        />
-        <br />
+        <p><strong>Repository:</strong> {githubUrl}</p>
+        <p><strong>Metric:</strong> {selectedMetric}</p>
 
         <div className="benchmark-input">
           <label>Benchmark Value: &nbsp; </label>
@@ -103,7 +88,7 @@ const Benchmarks = () => {
         <button
           className="run-button"
           onClick={handleSaveBenchmark}
-          disabled={!selectedLink || !selectedMetric || !benchmarkValue}
+          disabled={!benchmarkValue}
         >
           Save Benchmark
         </button>
