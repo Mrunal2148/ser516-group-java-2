@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import FogIndexChart from "./FogIndexChart";
+import "./css/FogIndexCalculator.css";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import './css/Spinner.css';
@@ -8,8 +10,7 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 const FogIndexCalculator = () => {
   const location = useLocation();
-  const { githubUrl } = location.state || {};
-
+  const [githubUrl, setGithubUrl] = useState(location.state?.githubUrl || "");
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(null);
@@ -17,39 +18,38 @@ const FogIndexCalculator = () => {
   const [benchmarkHistory, setBenchmarkHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
   const [showChart, setShowChart] = useState(false);
+  const [showGraph, setShowGraph] = useState(false);
+
 
   useEffect(() => {
-    if (githubUrl) {
-      calculateFogIndex(githubUrl);
+    if (location.state?.githubUrl) {
+      setGithubUrl(location.state.githubUrl);
+      calculateFogIndex(location.state.githubUrl);
     }
-  }, [githubUrl]);
+  }, [location.state]);
 
-  const formatGitHubZipUrl = (repoUrl) => {
-    if (!repoUrl) return "";
-    if (repoUrl.endsWith(".zip")) return repoUrl;
-    return repoUrl.replace(/\.git$/, "").replace(/\/$/, "") + "/archive/main.zip";
-  };
 
   const calculateFogIndex = async (url) => {
     try {
       setLoading(true);
       setError(null);
-      const zipUrl = formatGitHubZipUrl(url); // Convert to ZIP URL
+
 
       const response = await fetch(
-          `http://127.0.0.1:8080/api/fog-index/calculate?githubZipUrl=${encodeURIComponent(zipUrl)}`,
-          {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-          }
+        `http://127.0.0.1:8080/api/fog-index/calculate?githubZipUrl=${encodeURIComponent(url)}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
       );
-
+ 
       if (!response.ok) {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
-
+ 
       const data = await response.json();
       setResult(data);
+      setError(null);
     } catch (error) {
       setError(error.message || "Failed to fetch the Fog Index");
       setResult(null);
@@ -61,8 +61,17 @@ const FogIndexCalculator = () => {
   const fetchHistory = async (url) => {
     try {
       const truncatedUrl = url.replace("/archive/refs/heads/main.zip", "");
+      console.log("Fetching history for:", truncatedUrl);
+ 
       const response = await fetch(`http://127.0.0.1:8080/api/fog-index/history?repoUrl=${encodeURIComponent(truncatedUrl)}`);
+     
+      if (!response.ok) {
+        throw new Error(`Failed to fetch history: ${response.status} ${response.statusText}`);
+      }
+ 
       const data = await response.json();
+      console.log("Fetched history data:", data);
+ 
       setHistory(data);
     } catch (error) {
       console.error("Error fetching history:", error);
@@ -86,36 +95,9 @@ const FogIndexCalculator = () => {
     }
   };
 
-  const formatKey = (key) => {
-    return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-  };
-
-  const renderTable = () => {
-    if (!result) return null;
-
-    const entries = Object.entries(result);
-    const entriesToRender = entries.slice(0, -1); // Don't show 'message' key
-
-    return (
-      <table style={{ borderCollapse: 'collapse'}}>
-        <tbody>
-          {entriesToRender.map(([key, value], index) => (
-            <tr key={key} style={{ borderBottom: '1px solid black' }}>
-              <td style={{ padding: '8px', border: '1px solid black', fontWeight: index === 0 ? 'bold' : 'normal' }}>
-                {formatKey(key)}
-              </td>
-              <td style={{ padding: '8px', border: '1px solid black', fontWeight: index === 0 ? 'bold' : 'normal' }}>
-                {value}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  };
 
   const renderHistory = () => {
-    if (history.length === 0) return null;
+    if (!history || history.length === 0) return <p>No history available.</p>;
 
     return (
       <table style={{ borderCollapse: 'collapse'}}>
@@ -138,7 +120,7 @@ const FogIndexCalculator = () => {
   };
 
   const renderChart = () => {
-    if (history.length === 0) return null;
+    if (history.length === 0) return <p>No history data available for chart.</p>;
 
     const historyData = history.map(item => ({
       time: new Date(item.generatedTime).toISOString(),
@@ -151,6 +133,7 @@ const FogIndexCalculator = () => {
     }));
 
     const labels = [...new Set([...historyData.map(item => item.time), ...benchmarkData.map(item => item.time)])].sort();
+    if (labels.length === 0) return <p>No data available for chart.</p>;
 
     const data = {
       labels: labels.map(label => new Date(label).toLocaleString()),
@@ -189,18 +172,41 @@ const FogIndexCalculator = () => {
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {result && (
-        <div>
-          <h3>Calculation Result:</h3>
-          {renderTable()}
-        </div>
+        <>
+          <table className="fog-index-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(result).map(([key, value]) => (
+                <tr key={key}>
+                  <td>{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</td>
+                  <td>{value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <button className="show-graph-button" onClick={() => setShowGraph(!showGraph)}>
+            {showGraph ? "Hide Graph" : "Show Graph"}
+          </button>
+          {showGraph && (
+            <div className="graph-container">
+              <FogIndexChart data={result} />
+            </div>
+          )}
+        </>
       )}
       <div>
         <br/>
         <button onClick={() => {
-          setShowHistory(!showHistory);
           if (!showHistory) {
             fetchHistory(githubUrl);
+            fetchBenchmarkHistory(githubUrl.replace("/archive/refs/heads/main.zip", ""), "fog-index");
           }
+          setShowHistory(!showHistory);
         }}>
           {showHistory ? "Hide" : "See"} History
         </button>
@@ -214,11 +220,11 @@ const FogIndexCalculator = () => {
       <div>
         <br/>
         <button onClick={() => {
-          setShowChart(!showChart);
           if (!showChart) {
             fetchHistory(githubUrl);
             fetchBenchmarkHistory(githubUrl.replace("/archive/refs/heads/main.zip", ""), "fog-index");
           }
+          setShowChart(!showChart);
         }}>
           {showChart ? "Hide" : "Generate"} Chart
         </button>
