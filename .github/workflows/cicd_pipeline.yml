@@ -43,25 +43,31 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Repository  
+        uses: actions/checkout@v3
+
       - name: Install Docker Compose
         run: |
           sudo apt update
           sudo apt install -y docker-compose
 
+      - name: Verify Directory Structure
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Contents:"
+          ls -la
+
       - name: Deploy with Docker Compose
         run: |
-          # Pull latest images
+          if [ ! -f "docker-compose.yml" ]; then
+            echo "docker-compose.yml not found! Exiting..."
+            exit 1
+          fi
+
           docker pull ${{ secrets.DOCKER_USERNAME }}/app-python-backend:latest
           docker pull ${{ secrets.DOCKER_USERNAME }}/app-java-backend:latest
           docker pull ${{ secrets.DOCKER_USERNAME }}/app-frontend:latest
 
-          # Navigate to the correct directory
-          cd app
-
-          # Stop running containers (if any)
           docker-compose down || true
 
-          # Start the app
           docker-compose up -d
-
-
