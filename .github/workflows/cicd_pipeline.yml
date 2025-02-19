@@ -24,13 +24,7 @@ jobs:
           docker build -t app-python-backend ./app/backend/python-backend
           docker build -t app-java-backend ./app/backend
           docker build -t app-frontend ./app/frontend
-      
-      # - name: Run Unit Tests
-      #   run: |
-      #     docker run --rm app-python-backend sh -c "pip install pytest && pytest"
-      #     docker run --rm app-java-backend mvn test
-      #     docker run --rm app-frontend npm test -- --watchAll=false
-      
+
       - name: Log in to Docker Hub
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
@@ -49,15 +43,21 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy Locally with Docker Compose
+      - name: Install Docker Compose
         run: |
-          # Pull the latest images from Docker Hub
+          sudo apt update
+          sudo apt install -y docker-compose
+
+      - name: Deploy with Docker Compose
+        run: |
+          # Pull latest images
           docker pull ${{ secrets.DOCKER_USERNAME }}/app-python-backend:latest
           docker pull ${{ secrets.DOCKER_USERNAME }}/app-java-backend:latest
           docker pull ${{ secrets.DOCKER_USERNAME }}/app-frontend:latest
 
-          # Stop and remove any running containers
-          docker-compose down
+          # Stop running containers
+          docker-compose down || true
 
-          # Start up the containers using Docker Compose
+          # Start the app
           docker-compose up -d
+
