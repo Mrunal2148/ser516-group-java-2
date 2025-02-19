@@ -1,12 +1,11 @@
-/* 📌 Container */
+
 .fog-index-container {
     width: 80%;
     margin: auto;
     text-align: center;
     padding: 20px;
   }
-  
-  /* 📌 Table */
+
   .fog-index-table {
     width: 100%;
     border-collapse: collapse;
@@ -34,20 +33,19 @@
     background-color: #ddd;
   }
   
-  /* 📌 Graph Container */
+
   .graph-container {
     margin-top: 30px;
   }
   
-  /* 📌 Dropdown Wrapper */
+
   .chart-dropdown-container {
     position: relative;
     display: inline-block;
     margin-top: 25px;
     margin-bottom: 25px;
   }
-  
-  /* 📌 Styled Dropdown Button */
+
   .chart-select {
     padding: 1px 20px;
     font-size: 16px;
@@ -63,7 +61,7 @@
     width: 220px;
   }
   
-  /* 📌 Dropdown Arrow */
+
   .chart-dropdown-container::after {
     content: " ▼ "; /* Dropdown arrow */
     font-size: 14px;
@@ -74,8 +72,7 @@
     transform: translateY(-50%);
     pointer-events: none; 
   }
-  
-  /* 📌 Hover & Click Effects */
+
   .chart-select:hover {
     background-color: #218838;
     transform: scale(1.05);
@@ -85,8 +82,7 @@
     outline: none;
     box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
   }
-  
-  /* 📌 When Option is Selected */
+
   .chart-select:active {
     transform: scale(0.95);
   }
