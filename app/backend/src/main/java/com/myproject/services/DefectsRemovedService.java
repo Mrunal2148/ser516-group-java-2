@@ -13,10 +13,11 @@ import org.springframework.http.*;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DefectsRemovedService {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(DefectsRemovedService.class);
 
     @Value("${github.token}")  // GitHub API token from application.properties
@@ -25,44 +26,41 @@ public class DefectsRemovedService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    /**
-     * Fetch and calculate bug statistics for a given GitHub repository.
-     */
     public Map<String, Object> getBugStatistics(String owner, String repo) {
         Map<String, Integer> weeklyClosedBugs = new HashMap<>();
         Map<String, Integer> weeklyOpenedBugs = new HashMap<>();
         int totalOpenedBugs = 0;
         int totalClosedBugs = 0;
 
-        // Fetch issues labeled "Bug"
+        // Fetch issues labeled "Bug" and "Type: Bug"
         Map<String, Object> bugStats1 = fetchBugData(owner, repo, "Bug");
         Map<String, Object> bugStats2 = fetchBugData(owner, repo, "Type: Bug");
 
-        // Merge the results from both labels
+        // Merge results
         mergeBugStatistics(weeklyClosedBugs, (Map<String, Integer>) bugStats1.get("weeklyClosedBugs"));
         mergeBugStatistics(weeklyClosedBugs, (Map<String, Integer>) bugStats2.get("weeklyClosedBugs"));
-
         mergeBugStatistics(weeklyOpenedBugs, (Map<String, Integer>) bugStats1.get("weeklyOpenedBugs"));
         mergeBugStatistics(weeklyOpenedBugs, (Map<String, Integer>) bugStats2.get("weeklyOpenedBugs"));
 
         totalOpenedBugs = (int) bugStats1.get("totalOpenedBugs") + (int) bugStats2.get("totalOpenedBugs");
         totalClosedBugs = (int) bugStats1.get("totalClosedBugs") + (int) bugStats2.get("totalClosedBugs");
 
-        // Build the final statistics map
+        // Apply sorting
+        LinkedHashMap<String, Integer> sortedOpened = sortWeeklyMap(weeklyOpenedBugs);
+        LinkedHashMap<String, Integer> sortedClosed = sortWeeklyMap(weeklyClosedBugs);
+
         Map<String, Object> bugStatistics = new HashMap<>();
-        bugStatistics.put("weeklyClosedBugs", weeklyClosedBugs);
-        bugStatistics.put("weeklyOpenedBugs", weeklyOpenedBugs);
+        bugStatistics.put("weeklyClosedBugs", sortedClosed);
+        bugStatistics.put("weeklyOpenedBugs", sortedOpened);
         bugStatistics.put("totalOpenedBugs", totalOpenedBugs);
         bugStatistics.put("totalClosedBugs", totalClosedBugs);
 
         return bugStatistics;
     }
 
-    // Fetch bug data from GitHub based on a specific label.
-     
     private Map<String, Object> fetchBugData(String owner, String repo, String label) {
         String url = UriComponentsBuilder.fromHttpUrl("https://api.github.com/repos/{owner}/{repo}/issues")
-                .queryParam("state", "all") // Fetch both opened and closed issues
+                .queryParam("state", "all")
                 .queryParam("labels", label)
                 .queryParam("per_page", 100)
                 .buildAndExpand(owner, repo)
@@ -78,8 +76,6 @@ public class DefectsRemovedService {
         return parseIssues(response.getBody());
     }
 
-    //Parse the GitHub API response to extract opened and closed bug statistics.
-    
     private Map<String, Object> parseIssues(String responseBody) {
         Map<String, Integer> weeklyClosedBugs = new HashMap<>();
         Map<String, Integer> weeklyOpenedBugs = new HashMap<>();
@@ -91,22 +87,16 @@ public class DefectsRemovedService {
             WeekFields weekFields = WeekFields.of(Locale.getDefault());
 
             for (JsonNode issue : issues) {
-                if (!issue.has("pull_request")) { // Ignore PRs
-                    String createdDate = issue.get("created_at").asText();
-                    if (createdDate != null && !createdDate.isEmpty()) {
-                        LocalDate date = LocalDate.parse(createdDate.substring(0, 10));
-                        String week = date.getYear() + "-W" + date.get(weekFields.weekOfWeekBasedYear());
-
-                        weeklyOpenedBugs.put(week, weeklyOpenedBugs.getOrDefault(week, 0) + 1);
-                        totalOpenedBugs++;
-                    }
+                if (!issue.has("pull_request")) {
+                    LocalDate createdDate = LocalDate.parse(issue.get("created_at").asText().substring(0, 10));
+                    String createdWeek = createdDate.getYear() + "-W" + createdDate.get(weekFields.weekOfWeekBasedYear());
+                    weeklyOpenedBugs.put(createdWeek, weeklyOpenedBugs.getOrDefault(createdWeek, 0) + 1);
+                    totalOpenedBugs++;
 
                     if (issue.has("closed_at") && !issue.get("closed_at").isNull()) {
-                        String closedDate = issue.get("closed_at").asText();
-                        LocalDate date = LocalDate.parse(closedDate.substring(0, 10));
-                        String week = date.getYear() + "-W" + date.get(weekFields.weekOfWeekBasedYear());
-
-                        weeklyClosedBugs.put(week, weeklyClosedBugs.getOrDefault(week, 0) + 1);
+                        LocalDate closedDate = LocalDate.parse(issue.get("closed_at").asText().substring(0, 10));
+                        String closedWeek = closedDate.getYear() + "-W" + closedDate.get(weekFields.weekOfWeekBasedYear());
+                        weeklyClosedBugs.put(closedWeek, weeklyClosedBugs.getOrDefault(closedWeek, 0) + 1);
                         totalClosedBugs++;
                     }
                 }
@@ -124,11 +114,23 @@ public class DefectsRemovedService {
         return result;
     }
 
-    //Merges two weekly bug statistics maps.
-    
     private void mergeBugStatistics(Map<String, Integer> target, Map<String, Integer> source) {
-        for (Map.Entry<String, Integer> entry : source.entrySet()) {
-            target.put(entry.getKey(), target.getOrDefault(entry.getKey(), 0) + entry.getValue());
-        }
+        source.forEach((key, value) -> target.merge(key, value, Integer::sum));
+    }
+
+    private LinkedHashMap<String, Integer> sortWeeklyMap(Map<String, Integer> unsortedMap) {
+        return unsortedMap.entrySet().stream()
+                .sorted(Comparator.comparing(entry -> {
+                    String[] parts = entry.getKey().split("-W");
+                    return Integer.parseInt(parts[0]) * 100 + Integer.parseInt(parts[1]);
+                }))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue,
+                        LinkedHashMap::new
+                ));
     }
 }
+
+
