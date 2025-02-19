@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Card, CardContent } from "@mui/material";
+import { Card, CardContent, CardHeader, TextField, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import Alert from "@mui/material/Alert";
 
 export default function AddProject() {
   const [links, setLinks] = useState([]);
   const [newLink, setNewLink] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5005/links.json") // Ensure this path is correct
+    fetch("http://127.0.0.1:5005/links.json")
       .then((response) => response.json())
       .then((data) => setLinks(data))
       .catch((error) => console.error("Error fetching links:", error));
@@ -15,68 +20,72 @@ export default function AddProject() {
 
   const addLink = () => {
     const githubRepoRegex = /^https:\/\/github\.com\/[^\/]+\/[^\/]+$/;
-    if (newLink && githubRepoRegex.test(`https://github.com/${newLink}`)) {
-      const updatedLinks = [...links, `https://github.com/${newLink}`];
-      setLinks(updatedLinks);
-      setNewLink("");
-  
-      fetch("http://127.0.0.1:5005/save-links", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedLinks),
-      })
-        .then((response) => {
-          console.log('Response status:', response.status);  
-          if (!response.ok) {
-            throw new Error(`Network response was not ok: ${response.statusText}`);
-          }
-          
-          return response.json(); // Ensure the response is parsed as JSON
-        })
-        .then((data) => {
-          console.log("Links saved:", data.message);
-          fetch("http://127.0.0.1:5005/links.json")
-            .then((response) => response.json())
-            .then((data) => setLinks(data))
-            .catch((error) => console.error("Error fetching links:", error));
-        })
-        .catch((error) => {
-          console.error("There was a problem with the fetch operation:", error);
-        });
-    } else {
-      console.error("Invalid GitHub repository URL");
-      alert("Invalid GitHub repository URL. Please enter a valid URL.");  
-    }
-  };
+    const formattedLink = `https://github.com/${newLink}`;
     
+    if (!newLink) {
+      setError("Please enter a GitHub repository name.");
+      return;
+    }
+    
+    if (!githubRepoRegex.test(formattedLink)) {
+      setError("Invalid GitHub repository URL format. Use 'user/repo'.");
+      return;
+    }
+
+    setError("");
+    const updatedLinks = [...links, formattedLink];
+    setLinks(updatedLinks);
+    setNewLink("");
+
+    fetch("http://127.0.0.1:5005/save-links", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedLinks),
+    })
+      .then((response) => response.json())
+      .then(() => {
+        fetch("http://127.0.0.1:5005/links.json")
+          .then((response) => response.json())
+          .then((data) => setLinks(data))
+          .catch((error) => console.error("Error fetching links:", error));
+      })
+      .catch((error) => console.error("There was a problem with the fetch operation:", error));
+  };
+
   return (
-    <div className="p-4 grid gap-4 grid-cols-1 md:grid-cols-2">
-      <Card>
+    <div className="p-6 flex justify-center items-center min-h-screen">
+      <Card sx={{ maxWidth: 500, width: "100%", p: 2, boxShadow: 3 }}>
+        <CardHeader title="Add GitHub Project" sx={{ textAlign: "center" }} />
         <CardContent>
-          <h2 className="text-xl font-bold mb-4">Manage Links</h2>
-          <ul>
+          <Typography variant="body1" gutterBottom>
+            Add your GitHub repositories to track them easily.
+          </Typography>
+          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+          <TextField
+            fullWidth
+            label="GitHub Repository"
+            placeholder="user/repo"
+            variant="outlined"
+            value={newLink}
+            onChange={(e) => setNewLink(e.target.value)}
+            error={Boolean(error)}
+            helperText={error}
+            sx={{ mb: 2 }}
+          />
+          <Button variant="contained" color="secondary" fullWidth onClick={addLink}>
+            Add Link
+          </Button>
+          <List sx={{ mt: 2 }}>
             {links.slice(1).map((link, index) => (
-              <li key={index}>{link}</li>
+              <ListItem key={index} divider>
+                <ListItemText primary={link} />
+              </ListItem>
             ))}
-          </ul>
-          <div>
-            <label className="block font-medium mb-1">GitHub Repository</label>
-            <div className="flex items-center">
-              <input
-                type="text"
-                value={newLink}
-                onChange={(e) => setNewLink(e.target.value)}
-                placeholder={newLink ? "" : "user/repo"} // Hides placeholder when typing
-                className="border p-2 mr-2 w-64"
-              />
-              <Button onClick={addLink}>Add Link</Button>
-            </div>
-          </div>
+          </List>
         </CardContent>
       </Card>
     </div>
   );
-  
 }
