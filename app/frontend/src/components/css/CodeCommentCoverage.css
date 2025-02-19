@@ -1,0 +1,20 @@
+.show-graph-button {
+    margin-top: 20px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.show-graph-button:hover {
+    background-color: #218838;
+}
+
+.show-graph-button:active {
+    transform: scale(0.95);
+}

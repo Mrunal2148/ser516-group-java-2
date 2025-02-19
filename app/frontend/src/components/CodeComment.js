@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import CoverageDashboard from "./CoverageDashboard";
+import "./css/CodeCommentCoverage.css";
 
 export default function CodeComment() {
     const location = useLocation();
@@ -33,7 +34,7 @@ export default function CodeComment() {
                 <>
                     <p className="mt-4 text-lg">Comment Coverage: <b>{coverage.toFixed(2)}%</b></p>
                     <button 
-                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        className="show-graph-button"
                         onClick={() => setShowGraph(!showGraph)}
                     >
                         {showGraph ? "Hide Coverage Graph" : "Load Coverage Graph"}
