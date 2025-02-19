@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import FogIndexChart from "./FogIndexChart";
+import FogIndexChart from "../components/FogIndexChart";
 import "./css/FogIndexCalculator.css";
 
 const FogIndexCalculator = () => {
@@ -10,7 +10,7 @@ const FogIndexCalculator = () => {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [showGraph, setShowGraph] = useState(false); // Toggle graph
+  const [selectedGraph, setSelectedGraph] = useState("");
 
   useEffect(() => {
     if (githubUrl) {
@@ -28,14 +28,14 @@ const FogIndexCalculator = () => {
     try {
       setLoading(true);
       setError(null);
-      const zipUrl = formatGitHubZipUrl(url); // Convert to ZIP URL
+      const zipUrl = formatGitHubZipUrl(url);
 
       const response = await fetch(
-          `http://127.0.0.1:8080/api/fog-index/calculate?githubZipUrl=${encodeURIComponent(zipUrl)}`,
-          {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-          }
+        `http://127.0.0.1:8080/api/fog-index/calculate?githubZipUrl=${encodeURIComponent(zipUrl)}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
       );
 
       if (!response.ok) {
@@ -54,14 +54,19 @@ const FogIndexCalculator = () => {
 
   return (
     <div className="fog-index-container">
-      <h2>Fog Index Calculator</h2>
+      <h2 lassName="code-comment-title">Fog Index Calculator</h2>
+
+      {githubUrl && (
+        <p className="fog-index-repo">
+          <b>Repository:</b> <a href={githubUrl} target="_blank" rel="noopener noreferrer">{githubUrl}</a>
+        </p>
+      )}
 
       {loading && <p>Calculating Fog Index...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {result && (
         <>
-          {/* Table showing ALL values */}
           <table className="fog-index-table">
             <thead>
               <tr>
@@ -72,22 +77,27 @@ const FogIndexCalculator = () => {
             <tbody>
               {Object.entries(result).map(([key, value]) => (
                 <tr key={key}>
-                  <td>{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</td>
+                  <td>{key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}</td>
                   <td>{value}</td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-          <button className="show-graph-button" onClick={() => setShowGraph(!showGraph)}>
-            {showGraph ? "Hide Graph" : "Show Graph"}
-          </button>
+          {/* Styled Dropdown Button */}
+          <div className="chart-dropdown-container">
+            <select onChange={(e) => setSelectedGraph(e.target.value)} className="chart-select">
+              <option value="">Select Graph Type</option>
+              <option value="fogIndex">Fog Index Chart</option>
+              <option value="placeholder1">Placeholder Chart 1</option>
+              <option value="placeholder2">Placeholder Chart 2</option>
+            </select>
+          </div>
 
-          {showGraph && (
-            <div className="graph-container">
-              <FogIndexChart data={result} />
-            </div>
-          )}
+          {/* Render Selected Chart */}
+          {selectedGraph === "fogIndex" && <FogIndexChart data={result} />}
+          {selectedGraph === "placeholder1" && <p> Placeholder for another chart.</p>}
+          {selectedGraph === "placeholder2" && <p> Placeholder for yet another chart.</p>}
         </>
       )}
     </div>
