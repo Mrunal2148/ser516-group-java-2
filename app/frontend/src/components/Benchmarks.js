@@ -107,14 +107,6 @@ const Benchmarks = () => {
         >
           Save Benchmark
         </button>
-
-        {/* Back to Graph Button */}
-        <button
-          className="back-to-graph-button"
-          onClick={() => navigate("/codecomment", { state: { githubUrl: selectedLink } })}
-        >
-          Back to Graph
-        </button>
       </div>
     </div>
   );
