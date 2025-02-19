@@ -55,9 +55,13 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/app-java-backend:latest
           docker pull ${{ secrets.DOCKER_USERNAME }}/app-frontend:latest
 
-          # Stop running containers
+          # Navigate to the correct directory
+          cd app
+
+          # Stop running containers (if any)
           docker-compose down || true
 
           # Start the app
           docker-compose up -d
+
 
