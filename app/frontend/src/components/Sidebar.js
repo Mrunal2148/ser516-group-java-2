@@ -24,12 +24,6 @@ const Sidebar = () => {
             <span className="icon-text">Run Metrics</span>
           </NavLink>
         </li>
-        <li className="sidebar-item">
-          <NavLink to="/benchmarks">
-            <FaChartLine />
-            <span className="icon-text">Benchmarks</span>
-          </NavLink>
-        </li>
       </ul>
     </div>
   );
