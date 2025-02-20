@@ -29,17 +29,18 @@
 #     CMD ["python", "code_comment.py"]
     
 # Use a Maven image with OpenJDK 17
-    FROM maven:3.8.1-openjdk-17 AS java-backend
+FROM maven:3.8.1-openjdk-17 AS java-backend
 
-    WORKDIR /app
+WORKDIR /app
 
-    COPY . .
+COPY . .
 
-    RUN mvn clean install -DskipTests
+# Ensure Maven uses the GitHub token when building
+ARG GITHUB_TOKEN
+ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 
-    EXPOSE 8080
+RUN mvn clean install -DskipTests
 
-    CMD ["mvn", "spring-boot:run"]
+EXPOSE 8080
 
-
-    
+CMD ["mvn", "spring-boot:run"]
