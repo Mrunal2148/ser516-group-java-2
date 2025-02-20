@@ -10,6 +10,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.http.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.*;
@@ -19,8 +21,9 @@ import java.util.stream.Collectors;
 public class DefectsRemovedService {
 
     private static final Logger logger = LoggerFactory.getLogger(DefectsRemovedService.class);
+    private static final String JSON_FILE_PATH = "defects_data.json";
 
-    @Value("${github.token}")  // GitHub API token from application.properties
+    @Value("${github.token}")
     private String githubToken;
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -32,11 +35,9 @@ public class DefectsRemovedService {
         int totalOpenedBugs = 0;
         int totalClosedBugs = 0;
 
-        // Fetch issues labeled "Bug" and "Type: Bug"
         Map<String, Object> bugStats1 = fetchBugData(owner, repo, "Bug");
         Map<String, Object> bugStats2 = fetchBugData(owner, repo, "Type: Bug");
 
-        // Merge results
         mergeBugStatistics(weeklyClosedBugs, (Map<String, Integer>) bugStats1.get("weeklyClosedBugs"));
         mergeBugStatistics(weeklyClosedBugs, (Map<String, Integer>) bugStats2.get("weeklyClosedBugs"));
         mergeBugStatistics(weeklyOpenedBugs, (Map<String, Integer>) bugStats1.get("weeklyOpenedBugs"));
@@ -45,15 +46,19 @@ public class DefectsRemovedService {
         totalOpenedBugs = (int) bugStats1.get("totalOpenedBugs") + (int) bugStats2.get("totalOpenedBugs");
         totalClosedBugs = (int) bugStats1.get("totalClosedBugs") + (int) bugStats2.get("totalClosedBugs");
 
-        // Apply sorting
+        double percentageClosed = (totalOpenedBugs > 0) ? ((double) totalClosedBugs / totalOpenedBugs) * 100 : 0;
+
         LinkedHashMap<String, Integer> sortedOpened = sortWeeklyMap(weeklyOpenedBugs);
         LinkedHashMap<String, Integer> sortedClosed = sortWeeklyMap(weeklyClosedBugs);
+
+        saveDefectsDataToJson(repo, totalOpenedBugs, totalClosedBugs, percentageClosed);
 
         Map<String, Object> bugStatistics = new HashMap<>();
         bugStatistics.put("weeklyClosedBugs", sortedClosed);
         bugStatistics.put("weeklyOpenedBugs", sortedOpened);
         bugStatistics.put("totalOpenedBugs", totalOpenedBugs);
         bugStatistics.put("totalClosedBugs", totalClosedBugs);
+        bugStatistics.put("percentageBugsClosed", percentageClosed);
 
         return bugStatistics;
     }
@@ -114,6 +119,21 @@ public class DefectsRemovedService {
         return result;
     }
 
+    public List<Map<String, Object>> getDefectsHistory() {
+        File file = new File(JSON_FILE_PATH);
+        List<Map<String, Object>> jsonData = new ArrayList<>();
+
+        try {
+            if (file.exists()) {
+                jsonData = objectMapper.readValue(file, List.class);
+            }
+        } catch (IOException e) {
+            logger.error("Error reading defects history JSON", e);
+        }
+
+        return jsonData;
+    }
+
     private void mergeBugStatistics(Map<String, Integer> target, Map<String, Integer> source) {
         source.forEach((key, value) -> target.merge(key, value, Integer::sum));
     }
@@ -131,6 +151,27 @@ public class DefectsRemovedService {
                         LinkedHashMap::new
                 ));
     }
+
+    private void saveDefectsDataToJson(String repoUrl, int totalOpenedBugs, int totalClosedBugs, double percentageClosed) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("repo_url", repoUrl);
+        data.put("total_bugs_opened", totalOpenedBugs);
+        data.put("total_bugs_closed", totalClosedBugs);
+        data.put("percentage_bugs_closed", percentageClosed);
+        data.put("timestamp", new Date().toString());
+
+        File file = new File(JSON_FILE_PATH);
+        List<Map<String, Object>> jsonData = new ArrayList<>();
+
+        try {
+            if (file.exists()) {
+                jsonData = objectMapper.readValue(file, List.class);
+            }
+            jsonData.add(data);
+            objectMapper.writeValue(file, jsonData);
+            logger.info("Defects data saved to JSON file.");
+        } catch (IOException e) {
+            logger.error("Error saving defects data to JSON", e);
+        }
+    }
 }
-
-
