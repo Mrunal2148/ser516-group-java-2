@@ -16,5 +16,19 @@
                 "time": "2025-02-20T01:42:45.309Z"
             }
         ]
+    },
+    {
+        "repoUrl": "https://github.com/Mrunal2148/ser516-group-java-2",
+        "metric": "fog-index",
+        "history": [
+            {
+                "value": 38,
+                "time": "2025-02-20T03:42:07.457Z"
+            },
+            {
+                "value": 24,
+                "time": "2025-02-20T03:42:13.271Z"
+            }
+        ]
     }
 ]
