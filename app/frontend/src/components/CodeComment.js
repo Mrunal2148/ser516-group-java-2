@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import CoverageDashboard from "./CoverageDashboard";
 import CoverageTrendChart from "./CoverageTrendChart";
+import CombinedCoverageChart from "./CombinedCoverageChart"; 
 import Benchmarks from "./Benchmarks";
 import "../components/css/CodeComment.css";
 
@@ -11,6 +12,7 @@ export default function CodeComment() {
   const { githubUrl, metric } = location.state || {};
   const [coverage, setCoverage] = useState(null);
   const [coverageHistory, setCoverageHistory] = useState([]);
+  const [benchmarks, setBenchmarks] = useState([]); 
   const [selectedGraph, setSelectedGraph] = useState("");
   const [showBenchmarkModal, setShowBenchmarkModal] = useState(false);
 
@@ -36,8 +38,22 @@ export default function CodeComment() {
       }
     };
 
+    const fetchBenchmarks = async () => {
+      try {
+        const response = await axios.get("http://localhost:5005/benchmarks.json"); 
+        const repoBenchmark = response.data.find((benchmark) => benchmark.repoUrl === githubUrl && benchmark.metric === "code-comment-coverage");
+        if (repoBenchmark) {
+          setBenchmarks(repoBenchmark.history);
+        }
+      } catch (error) {
+        console.error("Error fetching benchmarks:", error);
+      }
+    };
+
     analyzeCoverage();
     fetchCoverageHistory();
+    fetchBenchmarks();  
+
   }, [githubUrl]);
 
   return (
@@ -73,7 +89,7 @@ export default function CodeComment() {
                 <option value="">Select Graph Type</option>
                 <option value="coverageGraph">Coverage Graph</option>
                 <option value="coverageTrend">Coverage Trend Over Time</option>
-                <option value="placeholder">Placeholder Chart</option>
+                <option value="combinedCoverageChart">Combined Coverage Chart</option>
               </select>
             </div>
           </div>
@@ -91,7 +107,13 @@ export default function CodeComment() {
             <div className="graph-container">
               {selectedGraph === "coverageGraph" && <CoverageDashboard selectedRepo={githubUrl} />}
               {selectedGraph === "coverageTrend" && <CoverageTrendChart data={coverageHistory} />}
-              {selectedGraph === "placeholder" && <p>Placeholder for another chart.</p>}
+              {selectedGraph === "combinedCoverageChart" && (
+                <CombinedCoverageChart
+                  data={coverageHistory}
+                  githubUrl={githubUrl}
+                  benchmarks={benchmarks}  // Pass benchmarks as prop
+                />
+              )}
             </div>
           )}
 
