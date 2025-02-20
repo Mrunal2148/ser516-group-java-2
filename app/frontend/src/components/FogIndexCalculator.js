@@ -160,7 +160,7 @@ const FogIndexCalculator = () => {
 
           {/* Render Selected Chart */}
           {selectedGraph === "fogIndex" && <FogIndexChart data={result} />}
-          {selectedGraph === "fogOverTime" && <TrendChart historyData={history} />}
+          {selectedGraph === "fogOverTime" && <TrendChart repoUrl={githubUrl} />} {/* Pass repoUrl */}
           {selectedGraph === "fogOverTimeBenchmarked" && <BenchmarkedChart historyData={history} benchmarkData={benchmarkHistory} />}
 
           {/* Benchmark Modal */}
