@@ -1,24 +1,24 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router } from "react-router-dom";
+import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
+import Footer from "./components/Footer";
+import MainContent from "./components/MainContent";
+import "./App.css"; 
 
-
-const App = () => { 
+const App = () => {
   return (
-  <Router> 
-    <div className="app"> 
-      <Header /> 
-      <div className="content"> 
-        <div className="sidebar"> 
-          <Sidebar /> 
-          </div> 
-          <div className="main-content"> 
-            <Routes>
-            <Route path="/" element={<MainContent />} /> 
-              </Routes> 
-            </div> 
-        </div> 
-        <Footer /> 
-      </div> 
-  </Router>); };
+    <Router>
+      <div className="app">
+        <Header />
+        <div className="content">
+          <Sidebar />
+          <MainContent /> {/* This component will now handle routing */}
+        </div>
+        <Footer />
+      </div>
+    </Router>
+  );
+};
 
 export default App;
