@@ -84,6 +84,7 @@ const FogIndexCalculator = () => {
             </tbody>
           </table>
 
+          {/* Styled Dropdown Button */}
           <div className="chart-dropdown-container">
             <select onChange={(e) => setSelectedGraph(e.target.value)} className="chart-select">
               <option value="">Select Graph Type</option>
@@ -92,7 +93,8 @@ const FogIndexCalculator = () => {
               <option value="placeholder2">Placeholder Chart 2</option>
             </select>
           </div>
-          
+
+          {/* Render Selected Chart */}
           {selectedGraph === "fogIndex" && <FogIndexChart data={result} />}
           {selectedGraph === "placeholder1" && <p> Placeholder for another chart.</p>}
           {selectedGraph === "placeholder2" && <p> Placeholder for yet another chart.</p>}
