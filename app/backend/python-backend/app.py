@@ -199,7 +199,8 @@ def get_benchmarks():
                 return jsonify(benchmarks), 200
             except json.JSONDecodeError:
                 return jsonify({"error": "Failed to read benchmarks.json"}), 500
-    return jsonify([]), 200  
+    return jsonify([]), 200
+ 
 
 
 if __name__ == "__main__":
