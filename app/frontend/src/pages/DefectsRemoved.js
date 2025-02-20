@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import "../components/css/DefectsRemoved.css";
 import DefectMetricsChart from "../components/DefectMetricsChart";
+import DefectsHistoryPercentageTrend from "../components/DefectsHistoryPercentageTrend";
 
 const DefectsRemoved = () => {
   const location = useLocation();
@@ -89,6 +90,7 @@ const DefectsRemoved = () => {
             <select onChange={(e) => setSelectedGraph(e.target.value)} className="chart-select">
               <option value="">Select Graph Type</option>
               <option value="defectMetrics">Defect Metrics Chart</option>
+              <option value="percentageTrend">Percentage Trend Over Time</option>
               <option value="placeholder1">Placeholder Chart 1</option>
               <option value="placeholder2">Placeholder Chart 2</option>
             </select>
@@ -96,9 +98,14 @@ const DefectsRemoved = () => {
 
           {/* 📊 Render selected chart */}
           {selectedGraph === "defectMetrics" && (
-            <div className="graph-container">
-              <DefectMetricsChart data={bugStats} />
-            </div>
+              <div className="graph-container">
+                <DefectMetricsChart data={bugStats} />
+              </div>
+          )}
+          {selectedGraph === "percentageTrend" && (
+              <div className="graph-container">
+                <DefectsHistoryPercentageTrend />
+              </div>
           )}
           {selectedGraph === "placeholder1" && <p>Placeholder for another chart.</p>}
           {selectedGraph === "placeholder2" && <p> Placeholder for yet another chart.</p>}
