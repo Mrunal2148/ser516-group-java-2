@@ -169,13 +169,13 @@ def save_benchmark():
         benchmarks = []
 
 
-    # Check if the repo URL and metric match, and add to history if they do
+
     for benchmark in benchmarks:
         if benchmark["repoUrl"] == repo_url and benchmark["metric"] == metric:
             benchmark["history"].append(history_entry)
             break
     else:
-        # If no match is found, add a new entry
+
         benchmarks.append({
             "repoUrl": repo_url,
             "metric": metric,
@@ -188,6 +188,18 @@ def save_benchmark():
 
 
     return jsonify({"message": "Benchmark saved successfully!"}), 200
+
+@app.route("/benchmarks.json", methods=["GET"])
+def get_benchmarks():
+    benchmark_file = "benchmarks.json"
+    if os.path.exists(benchmark_file):
+        with open(benchmark_file, "r") as file:
+            try:
+                benchmarks = json.load(file)
+                return jsonify(benchmarks), 200
+            except json.JSONDecodeError:
+                return jsonify({"error": "Failed to read benchmarks.json"}), 500
+    return jsonify([]), 200  
 
 
 if __name__ == "__main__":
