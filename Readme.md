@@ -23,10 +23,7 @@ The **Project Metrics Calculator** is a web-based application designed to help d
 - A valid GitHub token for repository analysis.
 
 ### Environment Variables
-Create a `.env` file in the root directory with:
-```env
-GITHUB_TOKEN=your_github_token_here
-```
+GITHUB Token
 To generate a GitHub personal access token (PAT) for developers, follow these steps:
 
 Step 1: Log into GitHub
@@ -57,7 +54,10 @@ Step 4: Copy and Store the Token
    ```bash
    git clone https://github.com/Mrunal2148/ser516-group-java-2.git
    cd app
+   touch .env
+   echo GITHUB_TOKEN=your_github_token_here >> .env
    ```
+
 2. **Start the application:**
    ```bash
    docker-compose build --no-cache
