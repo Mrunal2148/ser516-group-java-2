@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import FogIndexChart from "../components/FogIndexChart";
+import Benchmarks from "../components/Benchmarks";
 import "./css/FogIndexCalculator.css";
 
 const FogIndexCalculator = () => {
@@ -11,6 +12,7 @@ const FogIndexCalculator = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedGraph, setSelectedGraph] = useState("");
+  const [showBenchmarkModal, setShowBenchmarkModal] = useState(false);
 
   useEffect(() => {
     if (githubUrl) {
@@ -54,18 +56,22 @@ const FogIndexCalculator = () => {
 
   return (
     <div className="fog-index-container">
-      <h2 lassName="code-comment-title">Fog Index Calculator</h2>
+      <h2 className="code-comment-title">Fog Index Calculator</h2>
 
       {githubUrl && (
         <p className="fog-index-repo">
-          <b>Repository:</b> <a href={githubUrl} target="_blank" rel="noopener noreferrer">{githubUrl}</a>
+          <b>Repository:</b>{" "}
+          <a href={githubUrl} target="_blank" rel="noopener noreferrer">
+            {githubUrl}
+          </a>
         </p>
       )}
 
-      {loading && <p>Calculating Fog Index...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      {result && (
+      {loading ? (
+        <p>Calculating Fog Index...</p>
+      ) : error ? (
+        <p style={{ color: "red" }}>{error}</p>
+      ) : result ? (
         <>
           <table className="fog-index-table">
             <thead>
@@ -84,22 +90,48 @@ const FogIndexCalculator = () => {
             </tbody>
           </table>
 
-          {/* Styled Dropdown Button */}
+          {/* Dropdown Container */}
           <div className="chart-dropdown-container">
-            <select onChange={(e) => setSelectedGraph(e.target.value)} className="chart-select">
-              <option value="">Select Graph Type</option>
-              <option value="fogIndex">Fog Index Chart</option>
-              <option value="placeholder1">Placeholder Chart 1</option>
-              <option value="placeholder2">Placeholder Chart 2</option>
-            </select>
+            <div className="dropdown-section">
+              <select onChange={(e) => setSelectedGraph(e.target.value)} className="chart-select">
+                <option value="">Select Graph Type</option>
+                <option value="fogIndex">Fog Index Chart</option>
+                <option value="placeholder1">Placeholder Chart 1</option>
+                <option value="placeholder2">Placeholder Chart 2</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Separate Benchmark Section */}
+          <div className="benchmark-section">
+            <button 
+              className="add-benchmark-button" 
+              onClick={() => setShowBenchmarkModal(true)}
+            >
+              Add Benchmark
+            </button>
           </div>
 
           {/* Render Selected Chart */}
-          {selectedGraph === "fogIndex" && <FogIndexChart data={result} />}
-          {selectedGraph === "placeholder1" && <p> Placeholder for another chart.</p>}
-          {selectedGraph === "placeholder2" && <p> Placeholder for yet another chart.</p>}
+          {selectedGraph && (
+            <div className="graph-container">
+              {selectedGraph === "fogIndex" && <FogIndexChart data={result} />}
+              {selectedGraph === "placeholder1" && <p> Placeholder for another chart.</p>}
+              {selectedGraph === "placeholder2" && <p> Placeholder for yet another chart.</p>}
+            </div>
+          )}
+
+          {/* Benchmark Modal */}
+          {showBenchmarkModal && (
+            <div className="benchmark-modal">
+              <div className="benchmark-modal-content">
+                <button className="close-modal" onClick={() => setShowBenchmarkModal(false)}>X</button>
+                <Benchmarks githubUrl={githubUrl} selectedMetric="fog-index" />
+              </div>
+            </div>
+          )}
         </>
-      )}
+      ) : null}
     </div>
   );
 };
