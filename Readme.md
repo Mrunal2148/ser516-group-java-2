@@ -25,7 +25,7 @@ The **Project Metrics Calculator** is a web-based application designed to help d
 ### Environment Variables
 Create a `.env` file in the root directory with:
 ```env
-GITHUB_TOKEN=your_github_token_here
+GITHUB_TOKEN=REMOVE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REMOVE
 ```
 
 ### Installation & Running
