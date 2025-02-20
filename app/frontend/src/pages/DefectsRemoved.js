@@ -122,7 +122,7 @@ const DefectsRemoved = () => {
           {selectedGraph && (
             <div className="graph-container">
               {selectedGraph === "defectMetrics" && <DefectMetricsChart data={bugStats} />}
-              {selectedGraph === "percentageTrend" &&  <DefectsHistoryPercentageTrend />}
+              {selectedGraph === "percentageTrend" && <DefectsHistoryPercentageTrend githubUrl={githubUrl} />}
               {selectedGraph === "placeholder2" && <p> Placeholder for yet another chart.</p>}
             </div>
           )}
