@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import "../components/css/DefectsRemoved.css";
 import DefectMetricsChart from "../components/DefectMetricsChart";
 import DefectsHistoryPercentageTrend from "../components/DefectsHistoryPercentageTrend";
+import Benchmarks from "../components/Benchmarks";
 
 const DefectsRemoved = () => {
   const location = useLocation();
@@ -11,6 +12,7 @@ const DefectsRemoved = () => {
   const [bugStats, setBugStats] = useState(null);
   const [error, setError] = useState(null);
   const [selectedGraph, setSelectedGraph] = useState("");
+  const [showBenchmarkModal, setShowBenchmarkModal] = useState(false);
 
   useEffect(() => {
     if (!owner || !repo) {
@@ -37,7 +39,8 @@ const DefectsRemoved = () => {
   }, [owner, repo]);
 
   const githubUrl = owner && repo ? `https://github.com/${owner}/${repo}` : "";
-  // Function to sort weeks numerically by year first, then week number
+
+  
   const sortWeeks = (weeks) => {
     return weeks
       .map((week) => {
@@ -48,7 +51,7 @@ const DefectsRemoved = () => {
       .map((obj) => obj.week);
   };
 
-  // Sort weeks before extracting start/end weeks
+  
   const sortedOpenedWeeks =
     bugStats?.weeklyOpenedBugs ? sortWeeks(Object.keys(bugStats.weeklyOpenedBugs)) : [];
   const sortedClosedWeeks =
@@ -61,7 +64,15 @@ const DefectsRemoved = () => {
     <div className="defects-container">
       <h2 className="code-comment-title">Defects Removed Metrics</h2>
 
-      <p className="code-comment-repo"><b>Repository:</b> {githubUrl}</p>
+      {githubUrl && (
+        <p className="defects-repo">
+          <b>Repository:</b>{" "}
+          <a href={githubUrl} target="_blank" rel="noopener noreferrer">
+            {githubUrl}
+          </a>
+        </p>
+      )}
+
       {error ? (
         <p style={{ color: "red", fontWeight: "bold" }}>{error}</p>
       ) : bugStats ? (
@@ -85,30 +96,46 @@ const DefectsRemoved = () => {
             </tbody>
           </table>
 
-          {/* 📌 Dropdown to select chart */}
+          
           <div className="chart-dropdown-container">
-            <select onChange={(e) => setSelectedGraph(e.target.value)} className="chart-select">
-              <option value="">Select Graph Type</option>
-              <option value="defectMetrics">Defect Metrics Chart</option>
-              <option value="percentageTrend">Percentage Trend Over Time</option>
-              <option value="placeholder1">Placeholder Chart 1</option>
-              <option value="placeholder2">Placeholder Chart 2</option>
-            </select>
+            <div className="dropdown-section">
+              <select onChange={(e) => setSelectedGraph(e.target.value)} className="chart-select">
+                <option value="">Select Graph Type</option>
+                <option value="defectMetrics">Defect Metrics Chart</option>
+                <option value="percentageTrend">Percentage Trend Over Time</option>
+                <option value="placeholder2">Placeholder Chart 2</option>
+              </select>
+            </div>
           </div>
 
-          {/* 📊 Render selected chart */}
-          {selectedGraph === "defectMetrics" && (
-              <div className="graph-container">
-                <DefectMetricsChart data={bugStats} />
-              </div>
+         
+          <div className="benchmark-section">
+            <button 
+              className="add-benchmark-button" 
+              onClick={() => setShowBenchmarkModal(true)}
+            >
+              Add Benchmark
+            </button>
+          </div>
+
+          
+          {selectedGraph && (
+            <div className="graph-container">
+              {selectedGraph === "defectMetrics" && <DefectMetricsChart data={bugStats} />}
+              {selectedGraph === "percentageTrend" &&  <DefectsHistoryPercentageTrend />}
+              {selectedGraph === "placeholder2" && <p> Placeholder for yet another chart.</p>}
+            </div>
           )}
-          {selectedGraph === "percentageTrend" && (
-              <div className="graph-container">
-                <DefectsHistoryPercentageTrend />
+
+          
+          {showBenchmarkModal && (
+            <div className="benchmark-modal">
+              <div className="benchmark-modal-content">
+                <button className="close-modal" onClick={() => setShowBenchmarkModal(false)}>X</button>
+                <Benchmarks githubUrl={githubUrl} selectedMetric="defects-removed" />
               </div>
+            </div>
           )}
-          {selectedGraph === "placeholder1" && <p>Placeholder for another chart.</p>}
-          {selectedGraph === "placeholder2" && <p> Placeholder for yet another chart.</p>}
         </>
       ) : (
         <p>Loading bug statistics...</p>
