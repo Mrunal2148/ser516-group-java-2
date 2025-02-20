@@ -2,7 +2,7 @@ import React from "react";
 import mrunalImage from "./css/mrunal.jpeg";
 import shreyaImage from "./css/Shreya.jpg";
 import kmdImage from "./css/kmd.jpg";
-
+import parthImage from "./css/IMG_3627.jpg"
 const teamMembers = [
     {
         name: "Kaumudi Gulbarga",
@@ -21,8 +21,8 @@ const teamMembers = [
   {
     name: "Parth Patel",
     role: "Developer",
-    image: "https://via.placeholder.com/150",
-    description: "Software engineer passionate about AI and automation.",
+    image: parthImage,
+    description: "Software engineer who loves to code and chess.",
   },
   {
     name: "Shreya Prakash",
