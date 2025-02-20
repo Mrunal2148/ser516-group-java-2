@@ -60,7 +60,7 @@ const DefectsBenchmarkTrend = ({ githubUrl }) => {
     const benchmarkValues = sortedBenchmarkData.map(entry => entry.value);
 
     const chartData = {
-        labels: [...new Set([...defectLabels, ...benchmarkLabels])], // Merge timestamps
+        labels: [...new Set([...defectLabels, ...benchmarkLabels])], 
         datasets: [
             {
                 label: "Defects Removed (%)",
@@ -87,14 +87,13 @@ const DefectsBenchmarkTrend = ({ githubUrl }) => {
                 pointBackgroundColor: "#ff5733",
                 pointBorderWidth: 2,
                 pointHoverRadius: 7,
-                borderDash: [5, 5], // Dashed line for benchmarks
+                borderDash: [5, 5], 
             },
         ],
     };
 
     const options = {
         responsive: true,
-        maintainAspectRatio: false,
         layout: {
             padding: {
                 top: 20,
@@ -136,11 +135,11 @@ const DefectsBenchmarkTrend = ({ githubUrl }) => {
                     font: { size: 12 },
                     maxRotation: 25,
                     minRotation: 25,
-                    autoSkip: true,
-                    maxTicksLimit: 6,  // ✅ Keeps fewer X-axis labels for better readability
+        
+                    maxTicksLimit: 6,  
                 },
                 grid: {
-                    display: true,  // ✅ Enables vertical grid lines for context
+                    display: true,  
                     color: "rgba(200, 200, 200, 0.3)",
                 },
             },
@@ -154,17 +153,17 @@ const DefectsBenchmarkTrend = ({ githubUrl }) => {
                 ticks: {
                     color: "#555",
                     font: { size: 12 },
-                    stepSize: 10,  // ✅ Forces increments of 10 (10, 20, 30, ..., 100)
+                    stepSize: 10,  
                     beginAtZero: true,
-                    min: 0,  // ✅ Y-axis always starts at 0
-                    max: 100,  // ✅ Y-axis always ends at 100
+                    min: 0,  
+                    max: 100,  
                     callback: function (value) {
-                        return value + "%"; // ✅ Adds % symbol to Y-axis labels
+                        return value + "%"; 
                     },
                 },
                 grid: {
-                    color: "rgba(200, 200, 200, 0.5)",  // ✅ More visible grid lines for reference
-                    borderDash: [4, 4], // ✅ Dashed grid lines for better readability
+                    color: "rgba(200, 200, 200, 0.5)",  
+                    borderDash: [4, 4], 
                 },
             },
         },
@@ -174,13 +173,7 @@ const DefectsBenchmarkTrend = ({ githubUrl }) => {
 
     return (
         <div className="benchmark-trend-container">
-            <h3 className="chart-title">Defects Removed vs Benchmark Trend</h3>
-            <p className="defects-repo">
-                <b>Repository:</b>{" "}
-                <a href={githubUrl} target="_blank" rel="noopener noreferrer">
-                    {githubUrl}
-                </a>
-            </p>
+           
             <div className="graph-container">
                 <Line data={chartData} options={options} />
             </div>
