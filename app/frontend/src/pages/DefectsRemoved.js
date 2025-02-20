@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import "../components/css/DefectsRemoved.css";
 import DefectMetricsChart from "../components/DefectMetricsChart";
 import DefectsHistoryPercentageTrend from "../components/DefectsHistoryPercentageTrend";
+import DefectsBenchmarkTrend from "../components/DefectsBenchmarkTrend";
 import Benchmarks from "../components/Benchmarks";
 
 const DefectsRemoved = () => {
@@ -103,7 +104,7 @@ const DefectsRemoved = () => {
                 <option value="">Select Graph Type</option>
                 <option value="defectMetrics">Defect Metrics Chart</option>
                 <option value="percentageTrend">Percentage Trend Over Time</option>
-                <option value="placeholder2">Placeholder Chart 2</option>
+                <option value="DefectsBenchmarkTrend">Defects Benchmark Trend</option>
               </select>
             </div>
           </div>
@@ -123,7 +124,7 @@ const DefectsRemoved = () => {
             <div className="graph-container">
               {selectedGraph === "defectMetrics" && <DefectMetricsChart data={bugStats} />}
               {selectedGraph === "percentageTrend" && <DefectsHistoryPercentageTrend githubUrl={githubUrl} />}
-              {selectedGraph === "placeholder2" && <p> Placeholder for yet another chart.</p>}
+              {selectedGraph === "DefectsBenchmarkTrend" && <DefectsBenchmarkTrend githubUrl={githubUrl} />}
             </div>
           )}
 

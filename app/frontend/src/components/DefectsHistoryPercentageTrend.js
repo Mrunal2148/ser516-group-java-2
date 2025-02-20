@@ -7,12 +7,12 @@ const DefectsHistoryPercentageTrend = ({ githubUrl }) => {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        if (!githubUrl) return; // Ensure the repo URL is available before fetching
+        if (!githubUrl) return; 
 
         axios
             .get("http://localhost:8080/api/github/defects-history")
             .then((response) => {
-                // Extract repo name from URL
+            
                 const repoName = githubUrl.split("/").pop();
 
                 // Filter data to match repo name
@@ -48,8 +48,8 @@ const DefectsHistoryPercentageTrend = ({ githubUrl }) => {
                 borderColor: "#007bff",
                 backgroundColor: "rgba(0, 123, 255, 0.2)",
                 fill: true,
-                tension: 0.4, // Smoother curve
-                borderWidth: 3, // Thicker line
+                tension: 0.4, 
+                borderWidth: 3, 
                 pointRadius: 5,
                 pointBackgroundColor: "#007bff",
                 pointBorderWidth: 2,
@@ -108,12 +108,12 @@ const DefectsHistoryPercentageTrend = ({ githubUrl }) => {
                 ticks: {
                     color: "#555",
                     font: { size: 12 },
-                    stepSize: 10,  // ✅ Forces 10, 20, 30, ..., 100 intervals
+                    stepSize: 10,  
                     beginAtZero: true,
-                    min: 0,  // ✅ Forces Y-axis to start at 0
-                    max: 100,  // ✅ Forces Y-axis to always go up to 100
+                    min: 0,  
+                    max: 100, 
                     callback: function(value) {
-                        return value + "%"; // ✅ Adds % symbol to Y-axis labels
+                        return value + "%"; 
                     }
                 },
                 grid: {
@@ -124,7 +124,6 @@ const DefectsHistoryPercentageTrend = ({ githubUrl }) => {
     };
     
     
-
     return (
         <div className="defects-trend-container">
 
