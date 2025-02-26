@@ -78,6 +78,3 @@ body, html {
   transition: all 0.3s ease-in-out;
 }
 
-.main-content:hover {
-  transform: translateY(-5px);
-}
