@@ -13,7 +13,6 @@ export default function CodeComment() {
   const [coverage, setCoverage] = useState(null);
   const [coverageHistory, setCoverageHistory] = useState([]);
   const [benchmarks, setBenchmarks] = useState([]); 
-  const [selectedGraph, setSelectedGraph] = useState("");
   const [showBenchmarkModal, setShowBenchmarkModal] = useState(false);
 
   useEffect(() => {
@@ -83,17 +82,6 @@ export default function CodeComment() {
             </tbody>
           </table>
 
-          <div className="chart-dropdown-container">
-            <div className="dropdown-section">
-              <select onChange={(e) => setSelectedGraph(e.target.value)} className="chart-select">
-                <option value="">Select Graph Type</option>
-                <option value="coverageGraph">Coverage Graph</option>
-                <option value="coverageTrend">Coverage Trend Over Time</option>
-                <option value="combinedCoverageChart">Combined Coverage Chart</option>
-              </select>
-            </div>
-          </div>
-
           <div className="benchmark-section">
             <button 
               className="add-benchmark-button" 
@@ -103,19 +91,11 @@ export default function CodeComment() {
             </button>
           </div>
 
-          {selectedGraph && (
-            <div className="graph-container">
-              {selectedGraph === "coverageGraph" && <CoverageDashboard selectedRepo={githubUrl} />}
-              {selectedGraph === "coverageTrend" && <CoverageTrendChart data={coverageHistory} />}
-              {selectedGraph === "combinedCoverageChart" && (
-                <CombinedCoverageChart
-                  data={coverageHistory}
-                  githubUrl={githubUrl}
-                  benchmarks={benchmarks}  // Pass benchmarks as prop
-                />
-              )}
-            </div>
-          )}
+          <div className="graph-container">
+            <CoverageDashboard selectedRepo={githubUrl} />
+            <CoverageTrendChart data={coverageHistory} />
+            <CombinedCoverageChart data={coverageHistory} githubUrl={githubUrl} benchmarks={benchmarks} />
+          </div>
 
           {showBenchmarkModal && (
             <div className="benchmark-modal">
