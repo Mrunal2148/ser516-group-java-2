@@ -60,6 +60,7 @@ public class FogIndexController {
             if (existingRepo == null) {
                 // Create new repo entry
                 Map<String, Object> newRepoEntry = new HashMap<>();
+                newRepoEntry.put("repo", truncatedRepoName);
                 newRepoEntry.put("history", new ArrayList<>(Collections.singletonList(historyEntry)));
                 repoList.add(newRepoEntry);
             } else {
@@ -73,7 +74,7 @@ public class FogIndexController {
 
             System.out.println("Saved data: " + repoList); // Add logging
 
-            
+            result.put("repo", truncatedRepoName);
             result.put("message", "Calculation successful");
             return ResponseEntity.ok(result);
 
