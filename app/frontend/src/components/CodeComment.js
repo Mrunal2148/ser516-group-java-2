@@ -20,7 +20,7 @@ export default function CodeComment() {
 
     const analyzeCoverage = async () => {
       try {
-        const response = await axios.post("http://localhost:5005/analyze", { repo_url: githubUrl });
+        const response = await axios.post("http://localhost:5006/analyze", { repo_url: githubUrl });
         setCoverage(response.data.coverage);
       } catch (error) {
         console.error("Error analyzing repository:", error);
@@ -29,7 +29,7 @@ export default function CodeComment() {
 
     const fetchCoverageHistory = async () => {
       try {
-        const historyResponse = await axios.get("http://localhost:5005/get_coverage_data");
+        const historyResponse = await axios.get("http://localhost:5006/get_coverage_data");
         const filteredData = historyResponse.data.filter((entry) => entry.repo_url === githubUrl);
         setCoverageHistory(filteredData);
       } catch (error) {
