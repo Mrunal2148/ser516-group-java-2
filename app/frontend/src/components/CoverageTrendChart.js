@@ -31,7 +31,7 @@ const CoverageTrendChart = ({ data }) => {
       x: {
         title: {
           display: true,
-          text: "Timestamp",
+          text: "Timestamp(UTC)",
         },
         ticks: {
           maxTicksLimit: 6, // Avoid cluttering
