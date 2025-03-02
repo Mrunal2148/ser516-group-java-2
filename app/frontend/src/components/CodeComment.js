@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import CoverageDashboard from "./CoverageDashboard";
 import CoverageTrendChart from "./CoverageTrendChart";
-import CombinedCoverageChart from "./CombinedCoverageChart"; 
+import CombinedCoverageChart from "./CombinedCoverageChart";
 import Benchmarks from "./Benchmarks";
 import "../components/css/CodeComment.css";
 
@@ -12,7 +12,7 @@ export default function CodeComment() {
   const { githubUrl, metric } = location.state || {};
   const [coverage, setCoverage] = useState(null);
   const [coverageHistory, setCoverageHistory] = useState([]);
-  const [benchmarks, setBenchmarks] = useState([]); 
+  const [benchmarks, setBenchmarks] = useState([]);
   const [showBenchmarkModal, setShowBenchmarkModal] = useState(false);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export default function CodeComment() {
 
     const fetchBenchmarks = async () => {
       try {
-        const response = await axios.get("http://localhost:5005/benchmarks.json"); 
+        const response = await axios.get("http://localhost:5005/benchmarks.json");
         const repoBenchmark = response.data.find((benchmark) => benchmark.repoUrl === githubUrl && benchmark.metric === "code-comment-coverage");
         if (repoBenchmark) {
           setBenchmarks(repoBenchmark.history);
@@ -51,64 +51,64 @@ export default function CodeComment() {
 
     analyzeCoverage();
     fetchCoverageHistory();
-    fetchBenchmarks();  
+    fetchBenchmarks();
 
   }, [githubUrl]);
 
   return (
-    <div className="code-comment-container">
-      <h2 className="code-comment-title">Code Comment Coverage</h2>
-      <p className="code-comment-repo">
-        <b>Repository:</b>{" "}
-        <a href={githubUrl} target="_blank" rel="noopener noreferrer">
-          {githubUrl}
-        </a>
-      </p>
+      <div className="code-comment-container">
+        <h2 className="code-comment-title">Code Comment Coverage</h2>
+        <p className="code-comment-repo">
+          <b>Repository:</b>{" "}
+          <a href={githubUrl} target="_blank" rel="noopener noreferrer">
+            {githubUrl}
+          </a>
+        </p>
 
-      {coverage !== null ? (
-        <>
-          <table className="code-comment-table">
-            <thead>
-              <tr>
-                <th>Metric</th>
-                <th>Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Comment Coverage</td>
-                <td>{coverage.toFixed(2)}%</td>
-              </tr>
-            </tbody>
-          </table>
+        {coverage !== null ? (
+            <>
+              <table className="code-comment-table">
+                <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td>Comment Coverage</td>
+                  <td>{coverage.toFixed(2)}%</td>
+                </tr>
+                </tbody>
+              </table>
 
-          <div className="benchmark-section">
-            <button 
-              className="add-benchmark-button" 
-              onClick={() => setShowBenchmarkModal(true)}
-            >
-              Add Benchmark
-            </button>
-          </div>
-
-          <div className="graph-container">
-            <CoverageDashboard selectedRepo={githubUrl} />
-            <CoverageTrendChart data={coverageHistory} />
-            <CombinedCoverageChart data={coverageHistory} githubUrl={githubUrl} benchmarks={benchmarks} />
-          </div>
-
-          {showBenchmarkModal && (
-            <div className="benchmark-modal">
-              <div className="benchmark-modal-content">
-                <button className="close-modal" onClick={() => setShowBenchmarkModal(false)}>X</button>
-                <Benchmarks githubUrl={githubUrl} selectedMetric={metric || "code-comment-coverage"} />
+              <div className="benchmark-section">
+                <button
+                    className="add-benchmark-button"
+                    onClick={() => setShowBenchmarkModal(true)}
+                >
+                  Add Benchmark
+                </button>
               </div>
-            </div>
-          )}
-        </>
-      ) : (
-        <p className="mt-4 text-lg">Analyzing coverage...</p>
-      )}
-    </div>
+
+              <div className="graph-container">
+                <div className="graph-container">
+                  <CoverageDashboard selectedRepo={githubUrl} benchmarks={benchmarks}/>
+                </div>
+              </div>
+
+              {showBenchmarkModal && (
+                  <div className="benchmark-modal">
+                    <div className="benchmark-modal-content">
+                      <button className="close-modal" onClick={() => setShowBenchmarkModal(false)}>X</button>
+                      <Benchmarks githubUrl={githubUrl} selectedMetric={metric || "code-comment-coverage"} />
+                    </div>
+                  </div>
+              )}
+            </>
+        ) : (
+            <p className="mt-4 text-lg">Analyzing coverage...</p>
+        )}
+      </div>
   );
 }
