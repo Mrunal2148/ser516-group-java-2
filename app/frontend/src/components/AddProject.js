@@ -77,13 +77,13 @@ export default function AddProject() {
           <Button variant="contained" color="secondary" fullWidth onClick={addLink}>
             Add Link
           </Button>
-          <List sx={{ mt: 2 }}>
-            {links.map((link, index) => (
-                <ListItem key={index} divider>
-                  <ListItemText primary={link} />
-                </ListItem>
-            ))}
-          </List>
+            <List sx={{ mt: 2 }}>
+              {links.map((link, index) => (
+                  <ListItem key={index} divider>
+                    <ListItemText primary={link} />
+                  </ListItem>
+              ))}
+            </List>
         </CardContent>
       </Card>
     </div>
