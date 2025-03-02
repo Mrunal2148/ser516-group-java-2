@@ -27,23 +27,11 @@ public class FogIndexCalculator {
             ".java", ".txt", ".md", ".xml", ".json", ".html", ".csv");
 
     public String calculateFromGitHub(String githubZipUrl) throws IOException {
-        // Step 1: Fetch the default branch dynamically
-
-        System.out.println(githubZipUrl+"this is the url sent ");
-        String defaultBranch = getDefaultBranch(githubZipUrl);
-        if (defaultBranch == null) {
-            throw new IOException("Failed to determine default branch.");
-        }
-
-        //  Step 2: Replace /main.zip with the correct default branch
-        String zipUrl = githubZipUrl
-                .replace("/archive/main.zip", "/archive/" + defaultBranch + ".zip")
-                .replace("/archive/refs/heads/main.zip", "/archive/refs/heads/" + defaultBranch + ".zip");
-
-        System.out.println("Downloading ZIP from: " + zipUrl);
+                
+        System.out.println("Downloading ZIP from: " + githubZipUrl);
 
         String outputDir = "github_project";
-        downloadAndExtractZip(zipUrl, outputDir);
+        downloadAndExtractZip(githubZipUrl, outputDir);
         List<File> textFiles = getTextFiles(new File(outputDir));
 
         int totalFiles = textFiles.size();
@@ -75,7 +63,7 @@ public class FogIndexCalculator {
     }
 
     private void downloadAndExtractZip(String fileUrl, String outputDir) throws IOException {
-        System.out.println("📥 Downloading ZIP from: " + fileUrl);
+        System.out.println("Downloading ZIP from: " + fileUrl);
 
         File dir = new File(outputDir);
         if (dir.exists()) {

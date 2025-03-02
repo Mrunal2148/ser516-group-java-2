@@ -26,11 +26,8 @@ public class FogIndexController {
     public ResponseEntity<Map<String, Object>> calculateFogIndex(@RequestParam String githubZipUrl) {
         try {
             System.out.println("Received request for: " + githubZipUrl);
-
-  
-            
             String defaultBranch = calculator.getDefaultBranch(githubZipUrl);
-            System.out.println("default branch"+defaultBranch);
+            System.out.println("default branch : "+defaultBranch);
             if (defaultBranch == null) {
                 return ResponseEntity.status(500).body(Collections.singletonMap("error", "Failed to determine default branch"));
             }
@@ -41,9 +38,8 @@ public class FogIndexController {
             Map<String, Object> result = mapper.readValue(jsonResult, Map.class);
 
 
-            String truncatedRepoName = githubZipUrl.replace("/archive/refs/heads/" + defaultBranch + ".zip", "");
 
-    
+     String truncatedRepoName = correctedZipUrl.replace("/archive/refs/heads/" + defaultBranch + ".zip", "");
             List<Map<String, Object>> repoList = loadExistingData();
             Map<String, Object> existingRepo = repoList.stream()
                 .filter(repo -> repo.get("repo").equals(truncatedRepoName))
@@ -57,6 +53,7 @@ public class FogIndexController {
 
             if (existingRepo == null) {
                 Map<String, Object> newRepoEntry = new HashMap<>();
+                newRepoEntry.put("repo", truncatedRepoName);
                 newRepoEntry.put("history", new ArrayList<>(Collections.singletonList(historyEntry)));
                 repoList.add(newRepoEntry);
             } else {
@@ -66,8 +63,6 @@ public class FogIndexController {
             
             saveData(repoList);
             System.out.println(" Saved Data for: " + truncatedRepoName);
-
-            
             result.put("message", "Calculation successful");
             return ResponseEntity.ok(result);
 
@@ -89,7 +84,7 @@ public class FogIndexController {
             String defaultBranch = calculator.getDefaultBranch(repoUrl);
             String truncatedRepoName = repoUrl.replace("/archive/refs/heads/" + defaultBranch + ".zip", "");
 
-
+            System.out.println("truncated url for history"+truncatedRepoName);
             List<Map<String, Object>> repoList = loadExistingData();
             Map<String, Object> repoEntry = repoList.stream()
                 .filter(repo -> repo.get("repo").equals(truncatedRepoName))
