@@ -4,7 +4,7 @@ import "chart.js/auto";
 
 const CombinedCoverageChart = ({ data, githubUrl, benchmarks }) => {
   if (!data || data.length === 0 || benchmarks.length === 0) {
-    return <p>No coverage or benchmark data available.</p>;
+    return <p>No benchmark data available. Please add benchmarks and reload the page to see the Benchmark over Time graph!</p>;
   }
 
   const sortedData = [...data].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));

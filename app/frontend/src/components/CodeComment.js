@@ -10,6 +10,7 @@ import "../components/css/CodeComment.css";
 export default function CodeComment() {
   const location = useLocation();
   const { githubUrl, metric } = location.state || {};
+  
   const [coverage, setCoverage] = useState(null);
   const [coverageHistory, setCoverageHistory] = useState([]);
   const [benchmarks, setBenchmarks] = useState([]); 
@@ -22,6 +23,8 @@ export default function CodeComment() {
       try {
         const response = await axios.post("http://localhost:5006/analyze", { repo_url: githubUrl });
         setCoverage(response.data.coverage);
+        fetchCoverageHistory();
+        fetchBenchmarks();
       } catch (error) {
         console.error("Error analyzing repository:", error);
       }
@@ -50,9 +53,6 @@ export default function CodeComment() {
     };
 
     analyzeCoverage();
-    fetchCoverageHistory();
-    fetchBenchmarks();  
-
   }, [githubUrl]);
 
   return (
