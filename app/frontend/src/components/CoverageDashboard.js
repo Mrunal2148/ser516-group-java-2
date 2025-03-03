@@ -13,7 +13,7 @@ const CoverageDashboard = ({ selectedRepo, benchmarks }) => {
 
         const fetchCoverageData = async () => {
             try {
-                const response = await axios.get("http://localhost:5005/get_coverage_data");
+                const response = await axios.get("http://localhost:5006/get_coverage_data");
                 const normalizeUrl = (url) => url.trim().replace(/\/$/, "").toLowerCase();
                 const normalizedSelectedRepo = normalizeUrl(selectedRepo);
                 const repoData = response.data.find(repo => 
@@ -46,13 +46,13 @@ const CoverageDashboard = ({ selectedRepo, benchmarks }) => {
 
             {chartData.length > 0 ? (
                 <>
-                    {/* ✅ 1st Graph: Coverage Overview (Bar Chart) */}
+                    
                     <CoverageChart chartData={chartData} />
 
-                    {/* ✅ 2nd Graph: Coverage Trend (Line Chart) */}
+                    
                     <CoverageTrendChart data={historyData} />
 
-                    {/* ✅ 3rd Graph: Coverage vs. Benchmark (Dual-Line Chart) */}
+                    
                     <CombinedCoverageChart data={historyData} githubUrl={selectedRepo} benchmarks={benchmarks} />
                 </>
             ) : (
