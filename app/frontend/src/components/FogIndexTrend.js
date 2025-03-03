@@ -46,14 +46,34 @@ const TrendChart = ({ repoUrl }) => {
           const item = historyData.find(d => d.generatedTime === label);
           return item ? item.fogIndex : null;
         }),
-        fill: false,
+        fill: true, // Fill the area below the line
         borderColor: "blue",
+        backgroundColor: "rgba(0, 0, 255, 0.2)", // Set the fill color
         spanGaps: true,
       },
     ],
   };
 
-  return <Line data={data} />;
+
+  const options = {
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Time', // X-axis label
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Fog Index', // Y-axis label
+        },
+      },
+    },
+  };
+
+
+  return <Line data={data} options={options} />;
 };
 
 export default TrendChart;
