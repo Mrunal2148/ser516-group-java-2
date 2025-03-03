@@ -16,14 +16,14 @@ const Header = () => {
       display: "flex", 
       alignItems: "center", 
       justifyContent: "space-between", 
-      padding: "10px 20px", 
+      padding: "5px 20px", 
       borderBottom: "2px solid #ccc"
     }}>
 
       <img src={asuLogo} alt="ASU Logo" style={{ height: "70px", width: "auto" }} />
 
 
-      <h1 style={{ margin: 0,padding: "20px 0px", textAlign: "center", flex: 1 }}>Project Metrics Calculator</h1>
+      <h1 style={{ margin: 0,padding: "5px 0px", textAlign: "center", flex: 1 }}>Project Metrics Calculator</h1>
 
 
       {version && (
