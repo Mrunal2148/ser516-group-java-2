@@ -14,8 +14,11 @@ const CoverageDashboard = ({ selectedRepo, benchmarks }) => {
         const fetchCoverageData = async () => {
             try {
                 const response = await axios.get("http://localhost:5005/get_coverage_data");
-                const repoData = response.data.find(repo => repo.repo_url === selectedRepo);
-
+                const normalizeUrl = (url) => url.trim().replace(/\/$/, "").toLowerCase();
+                const normalizedSelectedRepo = normalizeUrl(selectedRepo);
+                const repoData = response.data.find(repo => 
+                    normalizeUrl(repo.repo_url) === normalizedSelectedRepo
+                );
                 const history = response.data.filter(repo => repo.repo_url === selectedRepo);
 
                 if (repoData) {

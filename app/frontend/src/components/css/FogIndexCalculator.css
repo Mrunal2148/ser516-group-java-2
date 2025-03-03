@@ -169,3 +169,12 @@
 .add-benchmark-button:hover {
   background-color: #218838;
 }
+
+.graph-section {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.benchmark-section {
+  margin-top: 20px;
+}
