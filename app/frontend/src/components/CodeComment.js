@@ -10,10 +10,10 @@ import "../components/css/CodeComment.css";
 export default function CodeComment() {
   const location = useLocation();
   const { githubUrl, metric } = location.state || {};
+  
   const [coverage, setCoverage] = useState(null);
   const [coverageHistory, setCoverageHistory] = useState([]);
   const [benchmarks, setBenchmarks] = useState([]); 
-  const [selectedGraph, setSelectedGraph] = useState("");
   const [showBenchmarkModal, setShowBenchmarkModal] = useState(false);
 
   useEffect(() => {
@@ -21,8 +21,10 @@ export default function CodeComment() {
 
     const analyzeCoverage = async () => {
       try {
-        const response = await axios.post("http://localhost:5005/analyze", { repo_url: githubUrl });
+        const response = await axios.post("http://localhost:5006/analyze", { repo_url: githubUrl });
         setCoverage(response.data.coverage);
+        fetchCoverageHistory();
+        fetchBenchmarks();
       } catch (error) {
         console.error("Error analyzing repository:", error);
       }
@@ -30,7 +32,7 @@ export default function CodeComment() {
 
     const fetchCoverageHistory = async () => {
       try {
-        const historyResponse = await axios.get("http://localhost:5005/get_coverage_data");
+        const historyResponse = await axios.get("http://localhost:5006/get_coverage_data");
         const filteredData = historyResponse.data.filter((entry) => entry.repo_url === githubUrl);
         setCoverageHistory(filteredData);
       } catch (error) {
@@ -51,9 +53,6 @@ export default function CodeComment() {
     };
 
     analyzeCoverage();
-    fetchCoverageHistory();
-    fetchBenchmarks();  
-
   }, [githubUrl]);
 
   return (
@@ -83,17 +82,6 @@ export default function CodeComment() {
             </tbody>
           </table>
 
-          <div className="chart-dropdown-container">
-            <div className="dropdown-section">
-              <select onChange={(e) => setSelectedGraph(e.target.value)} className="chart-select">
-                <option value="">Select Graph Type</option>
-                <option value="coverageGraph">Coverage Graph</option>
-                <option value="coverageTrend">Coverage Trend Over Time</option>
-                <option value="combinedCoverageChart">Combined Coverage Chart</option>
-              </select>
-            </div>
-          </div>
-
           <div className="benchmark-section">
             <button 
               className="add-benchmark-button" 
@@ -103,19 +91,11 @@ export default function CodeComment() {
             </button>
           </div>
 
-          {selectedGraph && (
-            <div className="graph-container">
-              {selectedGraph === "coverageGraph" && <CoverageDashboard selectedRepo={githubUrl} />}
-              {selectedGraph === "coverageTrend" && <CoverageTrendChart data={coverageHistory} />}
-              {selectedGraph === "combinedCoverageChart" && (
-                <CombinedCoverageChart
-                  data={coverageHistory}
-                  githubUrl={githubUrl}
-                  benchmarks={benchmarks}  // Pass benchmarks as prop
-                />
-              )}
-            </div>
-          )}
+          <div className="graph-container">
+            <CoverageDashboard selectedRepo={githubUrl} />
+            <CoverageTrendChart data={coverageHistory} />
+            <CombinedCoverageChart data={coverageHistory} githubUrl={githubUrl} benchmarks={benchmarks} />
+          </div>
 
           {showBenchmarkModal && (
             <div className="benchmark-modal">

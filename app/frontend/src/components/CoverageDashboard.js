@@ -10,7 +10,7 @@ const CoverageDashboard = ({ selectedRepo }) => {
 
         const fetchCoverageData = async () => {
             try {
-                const response = await axios.get("http://localhost:5005/get_coverage_data");
+                const response = await axios.get("http://localhost:5006/get_coverage_data");
                 const normalizeUrl = (url) => url.trim().replace(/\/$/, "").toLowerCase();
                 const normalizedSelectedRepo = normalizeUrl(selectedRepo);
                 const repoData = response.data.find(repo => 
