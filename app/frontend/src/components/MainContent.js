@@ -7,6 +7,7 @@ import CodeComment from "./CodeComment";
 import FogIndexCalculator from "./FogIndexCalculator";
 import CoverageDashboard from "./CoverageDashboard";
 import DefectsRemoved from "../pages/DefectsRemoved";
+import MultiMetrics from "../pages/MultiMetrics";
 
 const MainContent = () => {
   return (
@@ -18,6 +19,7 @@ const MainContent = () => {
         <Route path="/codecomment" element={<CodeComment />} />
         <Route path="/fogindex" element={<FogIndexCalculator />} />
         <Route path="/coverage" element={<CoverageDashboard />} />
+        <Route path="/multi-metrics" element={<MultiMetrics />} /> 
         <Route path="/defectsremoved" element={<DefectsRemoved />} /> 
       </Routes>
     </div>
