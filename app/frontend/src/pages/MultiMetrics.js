@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import FogIndexCalculator from "../components/FogIndexCalculator";
 import CoverageDashboard from "../components/CoverageDashboard";
 import DefectsRemoved from "../pages/DefectsRemoved";
+import CodeComment from "../components/CodeComment";
 import "../components/css/MultiMetrics.css"; 
 
 const MultiMetrics = () => {
@@ -16,7 +17,7 @@ const MultiMetrics = () => {
       {selectedMetrics?.length > 0 ? (
         <>
           {selectedMetrics.includes("fog-index") && <FogIndexCalculator githubUrl={githubUrl} />}
-          {selectedMetrics.includes("code-comment-coverage") && <CoverageDashboard selectedRepo={githubUrl} />}
+          {selectedMetrics.includes("code-comment-coverage") && <CodeComment selectedRepo={githubUrl} />}
           {selectedMetrics.includes("defects-removed") && <DefectsRemoved owner={owner} repo={repo} />}
         </>
       ) : (
