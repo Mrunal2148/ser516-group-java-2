@@ -20,7 +20,7 @@ const CoverageDashboard = ({ selectedRepo, benchmarks }) => {
                     setChartData([
                         { name: "Total Lines", value: repoData.total_lines },
                         { name: "Comment Lines", value: repoData.comment_lines },
-                        { name: "Coverage %", value: repoData.coverage },
+                        // { name: "Coverage %", value: repoData.coverage },
                     ]);
                 } else {
                     setChartData([]);
@@ -33,7 +33,7 @@ const CoverageDashboard = ({ selectedRepo, benchmarks }) => {
 
     return (
         <div style={{ width: "100%", padding: "20px" }}>
-            <h2>Code Comment Coverage Dashboard</h2>
+            <h2>Code Comment Coverage Breakdown</h2>
 
             {chartData.length > 0 ? (
                 <>
