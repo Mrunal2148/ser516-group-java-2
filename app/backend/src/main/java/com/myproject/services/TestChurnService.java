@@ -160,106 +160,138 @@ public class TestChurnService {
         return testFiles;
     }
     
-
-    // private Map<String, Object> analyzeTestChurn(Map<String, String> oldTestFiles, Map<String, String> newTestFiles) {
-    //     int addedTests = 0, deletedTests = 0, modifiedTests = 0;
-
-    //     Set<String> allFiles = new HashSet<>(oldTestFiles.keySet());
-    //     allFiles.addAll(newTestFiles.keySet());
-
-    //     for (String filePath : allFiles) {
-    //         int oldTests = countTestCases(oldTestFiles.getOrDefault(filePath, ""));
-    //         int newTests = countTestCases(newTestFiles.getOrDefault(filePath, ""));
-
-    //         if (!oldTestFiles.containsKey(filePath)) addedTests += newTests;
-    //         else if (!newTestFiles.containsKey(filePath)) deletedTests += oldTests;
-    //         else modifiedTests += Math.abs(newTests - oldTests);
-    //     }
-
-    //     Map<String, Object> testChurnMetrics = new HashMap<>();
-    //     testChurnMetrics.put("added_tests", addedTests);
-    //     testChurnMetrics.put("deleted_tests", deletedTests);
-    //     testChurnMetrics.put("modified_tests", modifiedTests);
-    //     testChurnMetrics.put("timestamp", new Date().toString());
-
-  
-
-    //     return testChurnMetrics;
-    // }
-    
-    
     private Map<String, Object> analyzeTestChurn(Map<String, String> oldTestFiles, Map<String, String> newTestFiles) {
         int addedTests = 0, deletedTests = 0, modifiedTests = 0;
+        Set<String> allFiles = new HashSet<>();
     
-        Set<String> allFiles = new HashSet<>(oldTestFiles.keySet());
-        allFiles.addAll(newTestFiles.keySet());
+        // Normalize file paths (remove commit SHA from the path)
+        Map<String, String> normalizedOldTestFiles = normalizeFilePaths(oldTestFiles);
+        Map<String, String> normalizedNewTestFiles = normalizeFilePaths(newTestFiles);
     
-        for (String filePath : allFiles) {
-            String oldContent = oldTestFiles.getOrDefault(filePath, "");
-            String newContent = newTestFiles.getOrDefault(filePath, "");
+        allFiles.addAll(normalizedOldTestFiles.keySet());
+        allFiles.addAll(normalizedNewTestFiles.keySet());
     
-            if (!oldTestFiles.containsKey(filePath)) {
-                // If file is new, count all its tests as added
-                addedTests += countTestCases(newContent);
-            } else if (!newTestFiles.containsKey(filePath)) {
-                // If file is deleted, count all its tests as deleted
-                deletedTests += countTestCases(oldContent);
-            } else {
-                // If file exists in both commits, check for modifications
-                int changedLines = countChangedLines(oldContent, newContent);
-                if (changedLines > 0) {
-                    modifiedTests += changedLines; // Count number of changed lines
+       // File logFile = new File("test_churn_log2.txt");
+        
+        // try (BufferedWriter writer = new BufferedWriter(new FileWriter(logFile, true))) {
+            // writer.write("==== Test Churn Analysis Log ====\n");
+            // writer.write("Timestamp: " + new Date() + "\n");
+        try{
+            for (String filePath : allFiles) {
+                String oldContent = normalizedOldTestFiles.getOrDefault(filePath, "");
+                String newContent = normalizedNewTestFiles.getOrDefault(filePath, "");
+    
+                Set<String> oldTests = extractTestCases(oldContent);
+                Set<String> newTests = extractTestCases(newContent);
+    
+                // Finding added tests
+                for (String newTest : newTests) {
+                    if (!oldTests.contains(newTest)) {
+                        addedTests++;
+                      //  writer.write(" + ADDED: " + newTest + " (in file: " + filePath + ")\n");
+                    }
+                }
+    
+                // Finding deleted tests
+                for (String oldTest : oldTests) {
+                    if (!newTests.contains(oldTest)) {
+                        deletedTests++;
+                       // writer.write("X DELETED: " + oldTest + " (from file: " + filePath + ")\n");
+                    }
+                }
+    
+                // Finding modified tests
+                for (String test : oldTests) {
+                    if (newTests.contains(test)) {
+                        String oldBody = extractTestBody(oldContent, test);
+                        String newBody = extractTestBody(newContent, test);
+                        if (!oldBody.equals(newBody)) {
+                            modifiedTests++;
+                            // writer.write("✏️ MODIFIED: " + test + " (in file: " + filePath + ")\n");
+                            // writer.write("  - OLD: " + oldBody + "\n");
+                            // writer.write("  - NEW: " + newBody + "\n");
+                        }
+                    }
                 }
             }
+    
+            //writer.write("==== End of Log ====\n\n");
+        } catch (Exception e) {
+            logger.error("Error writing to log file", e);
         }
     
         Map<String, Object> testChurnMetrics = new HashMap<>();
         testChurnMetrics.put("added_tests", addedTests);
         testChurnMetrics.put("deleted_tests", deletedTests);
-        testChurnMetrics.put("modified_tests", modifiedTests); // Now counting modified lines
+        testChurnMetrics.put("modified_tests", modifiedTests);
         testChurnMetrics.put("timestamp", new Date().toString());
     
-       // saveTestChurnToFile(testChurnMetrics);
         return testChurnMetrics;
     }
     
+    private Map<String, String> normalizeFilePaths(Map<String, String> testFiles) {
+        Map<String, String> normalizedFiles = new HashMap<>();
     
-    private int countChangedLines(String oldContent, String newContent) {
-        String[] oldLines = oldContent.split("\n");
-        String[] newLines = newContent.split("\n");
-    
-        int changes = 0;
-        int minLength = Math.min(oldLines.length, newLines.length);
-    
-        // Compare line by line
-        for (int i = 0; i < minLength; i++) {
-            if (!oldLines[i].trim().equals(newLines[i].trim())) {
-                changes++; 
-            }
+        for (Map.Entry<String, String> entry : testFiles.entrySet()) {
+            String normalizedPath = entry.getKey().replaceAll("/react-[a-f0-9]+/", "/react/");
+            normalizedFiles.put(normalizedPath, entry.getValue());
         }
     
-        // Count added or removed lines
-        changes += Math.abs(oldLines.length - newLines.length);
-    
-        return changes;
+        return normalizedFiles;
     }
     
-    private int countTestCases(String content) {
-        return (int) Arrays.stream(content.split("\n")).filter(line ->
-                line.contains("test(") || line.contains("@Test") || line.contains("def test_")
-        ).count();
+    
+    private Set<String> extractTestCases(String content) {
+        Set<String> testCases = new HashSet<>();
+        String[] lines = content.split("\n");
+    
+        for (String line : lines) {
+            line = line.trim();
+            if (line.matches(".*test\\s*\\(.*") ||  // JavaScript Jest/Mocha
+                line.matches(".*it\\s*\\(.*") ||    // JavaScript BDD
+                line.matches(".*describe\\s*\\(.*") || // Mocha/Jest
+                line.matches(".*@Test.*") ||        // Java JUnit
+                line.matches(".*def test_.*") ||    // Python unittest
+                line.matches(".*expect\\s*\\(.*") || // React Testing Library
+                line.matches(".*render\\s*\\(.*")) { // React/Vue Test Utils
+    
+                testCases.add(line);
+            }
+        }
+        return testCases;
     }
+    
+    private String extractTestBody(String content, String testCase) {
+        StringBuilder testBody = new StringBuilder();
+        String[] lines = content.split("\n");
+    
+        boolean insideTest = false;
+        for (String line : lines) {
+            if (line.contains(testCase)) {
+                insideTest = true;
+            }
+            if (insideTest) {
+                testBody.append(line).append("\n");
+                if (line.trim().endsWith("}") || line.trim().equals("")) { // Stop at function block end
+                    break;
+                }
+            }
+        }
+        return testBody.toString();
+    }
+    
 
     private boolean isTestFile(String filePath) {
         // Convert to lowercase for uniformity
         String lowerCasePath = filePath.toLowerCase();
     
-        // Check if the file is inside a "test" directory
-        if (lowerCasePath.contains("/test/") || lowerCasePath.contains("/tests/") || lowerCasePath.contains("/__tests__/")) {
+        // Check if the file is inside a "test" directory or frontend-specific paths
+        if (lowerCasePath.contains("/test/") || lowerCasePath.contains("/tests/") ||
+            lowerCasePath.contains("/__tests__/") || lowerCasePath.contains("/cypress/")) {
             return true;
         }
     
-        // Check if file extension is a known test type
+        // Check if file extension is a known frontend test type
         return TEST_FILE_EXTENSIONS.stream().anyMatch(lowerCasePath::endsWith);
     }
     
@@ -270,12 +302,13 @@ public class TestChurnService {
         File zipFile = new File(zipFileName);
     
         try {
+
             // Delete extracted folder
             if (folder.exists()) {
                 FileUtils.deleteDirectory(folder);
                 logger.info("Successfully deleted folder: " + folder.getAbsolutePath());
             } else {
-                logger.warn("⚠️ Folder not found: " + folder.getAbsolutePath());
+                logger.warn("Folder not found: " + folder.getAbsolutePath());
             }
     
             // Delete ZIP file
@@ -283,15 +316,12 @@ public class TestChurnService {
                 zipFile.delete();
                 logger.info("Successfully deleted ZIP file: " + zipFile.getAbsolutePath());
             } else {
-                logger.warn("⚠️ ZIP file not found: " + zipFile.getAbsolutePath());
+                logger.warn("ZIP file not found: " + zipFile.getAbsolutePath());
             }
         } catch (IOException e) {
-            logger.error("⚠️ Error deleting files: " + folder.getAbsolutePath() + " or " + zipFile.getAbsolutePath(), e);
+            logger.error("Error deleting files: " + folder.getAbsolutePath() + " or " + zipFile.getAbsolutePath(), e);
         }
     }
-
-    
-
 }
 
 
