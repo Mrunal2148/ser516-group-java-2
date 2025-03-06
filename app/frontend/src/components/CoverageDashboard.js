@@ -38,7 +38,7 @@ const CoverageDashboard = ({ selectedRepo, benchmarks }) => {
             {chartData.length > 0 ? (
                 <>
                     <CoverageChart chartData={chartData} />
-                    <CoverageTrendChart data={historyData} />
+                    {/*<CoverageTrendChart data={historyData} />*/}
                     <CombinedCoverageChart data={historyData} githubUrl={selectedRepo} benchmarks={benchmarks} />
                 </>
             ) : (
