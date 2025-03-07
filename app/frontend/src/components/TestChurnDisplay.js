@@ -31,7 +31,7 @@ const TestChurnDisplay = () => {
 
   return (
     <div className="test-churn-container">
-      <h2 className="test-churn-title">Test Churn for {repo}</h2>
+      <h2 className="test-churn-title">Test Churn for : {repo}</h2>
       <div className="input-group">
         <label>Start Date:</label>
         <input
