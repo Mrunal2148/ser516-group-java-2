@@ -45,6 +45,9 @@ const RunMetrics = () => {
         case "defects-removed":
           navigate("/defectsremoved", { state: { owner, repo } });
           break;
+        case "test-churn":
+          navigate("/testChurn", { state: { owner, repo } });
+          break;
         default:
           alert("Invalid metric");
           break;
@@ -94,6 +97,15 @@ const RunMetrics = () => {
             onChange={() => handleMetricChange("defects-removed")}
           />
           <label htmlFor="defects-removed">Defects Removed</label>
+        </div>
+        <div className="checkbox">
+          <input
+            type="checkbox"
+            id="test-churn"
+            checked={selectedMetrics.includes("test-churn")}
+            onChange={() => handleMetricChange("test-churn")}
+          />
+          <label htmlFor="test-churn">Test Churn</label>
         </div>
       </div>
 
