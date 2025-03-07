@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 import "../components/css/DefectsRemoved.css";
 import DefectMetricsChart from "../components/DefectMetricsChart";
 import DefectsHistoryPercentageTrend from "../components/DefectsHistoryPercentageTrend";
-import DefectsBenchmarkTrend from "../components/DefectsBenchmarkTrend";
 import Benchmarks from "../components/Benchmarks";
 
 const DefectsRemoved = () => {
@@ -94,14 +93,10 @@ const DefectsRemoved = () => {
             </div>
 
             <div className="graph-section">
-              <h3>Defects Removed Percentage Trend</h3>
+              <h3>Defects Removed Percentage Angainst Benchmark Trend</h3>
               <DefectsHistoryPercentageTrend githubUrl={githubUrl} />
             </div>
 
-            <div className="graph-section">
-              <h3>Defects Benchmark Trend</h3>
-              <DefectsBenchmarkTrend githubUrl={githubUrl} />
-            </div>
           </div>
 
           
