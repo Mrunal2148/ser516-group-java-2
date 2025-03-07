@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CoverageChart from "./CoverageChart";
-import CoverageTrendChart from "./CoverageTrendChart";
 import CombinedCoverageChart from "./CombinedCoverageChart";
 
 const CoverageDashboard = ({ selectedRepo, benchmarks }) => {
@@ -38,7 +37,6 @@ const CoverageDashboard = ({ selectedRepo, benchmarks }) => {
             {chartData.length > 0 ? (
                 <>
                     <CoverageChart chartData={chartData} />
-                    {/*<CoverageTrendChart data={historyData} />*/}
                     <CombinedCoverageChart data={historyData} githubUrl={selectedRepo} benchmarks={benchmarks} />
                 </>
             ) : (

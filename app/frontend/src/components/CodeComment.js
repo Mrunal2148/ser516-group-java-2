@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import CoverageDashboard from "./CoverageDashboard";
-import CoverageTrendChart from "./CoverageTrendChart";
-import CombinedCoverageChart from "./CombinedCoverageChart";
 import Benchmarks from "./Benchmarks";
 import "../components/css/CodeComment.css";
 
