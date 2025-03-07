@@ -7,19 +7,18 @@ const CoverageTrendChart = ({ data }) => {
     return <p>No coverage data available for trend analysis.</p>;
   }
 
-  // Sort data by timestamp
   const sortedData = [...data].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
   const chartData = {
-    labels: sortedData.map((entry) => new Date(entry.timestamp).toLocaleString()), // X-axis (time)
+    labels: sortedData.map((entry) => new Date(entry.timestamp).toLocaleString()),
     datasets: [
       {
         label: "Code Comment Coverage Over Time",
-        data: sortedData.map((entry) => entry.coverage), // Y-axis (coverage %)
+        data: sortedData.map((entry) => entry.coverage),
         borderColor: "#007bff",
         backgroundColor: "rgba(0, 123, 255, 0.5)",
         fill: true,
-        tension: 0.3, // Smooth curve
+        tension: 0.3,
       },
     ],
   };
@@ -29,28 +28,20 @@ const CoverageTrendChart = ({ data }) => {
     maintainAspectRatio: false,
     scales: {
       x: {
-        title: {
-          display: true,
-          text: "Timestamp",
-        },
-        ticks: {
-          maxTicksLimit: 6, // Avoid cluttering
-        },
+        title: { display: true, text: "Timestamp" },
+        ticks: { maxTicksLimit: 6 },
       },
       y: {
-        title: {
-          display: true,
-          text: "Coverage (%)",
-        },
+        title: { display: true, text: "Coverage (%)" },
         beginAtZero: true,
       },
     },
   };
 
   return (
-    <div style={{ height: "400px", width: "100%" }}>
-      <Line data={chartData} options={options} />
-    </div>
+      <div style={{ height: "400px", width: "100%" }}>
+        <Line data={chartData} options={options} />
+      </div>
   );
 };
 

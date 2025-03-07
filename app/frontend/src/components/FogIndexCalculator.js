@@ -15,23 +15,15 @@ const FogIndexCalculator = () => {
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState([]);
   const [benchmarkHistory, setBenchmarkHistory] = useState([]);
-  const [selectedGraph, setSelectedGraph] = useState("");
   const [showBenchmarkModal, setShowBenchmarkModal] = useState(false);
 
   useEffect(() => {
     if (githubUrl) {
       calculateFogIndex(githubUrl);
-    }
-  }, [githubUrl]);
-
-  useEffect(() => {
-    if (selectedGraph === "fogOverTime" || selectedGraph === "fogOverTimeBenchmarked") {
       fetchHistory(githubUrl);
-    }
-    if (selectedGraph === "fogOverTimeBenchmarked") {
       fetchBenchmarkHistory(githubUrl, "fog-index");
     }
-  }, [selectedGraph, githubUrl]);
+  }, [githubUrl]);
 
   const formatGitHubZipUrl = (repoUrl) => {
     if (!repoUrl) return "";
@@ -136,19 +128,7 @@ const FogIndexCalculator = () => {
             </tbody>
           </table>
 
-          {/* Dropdown Container */}
-          <div className="chart-dropdown-container">
-            <div className="dropdown-section">
-              <select onChange={(e) => setSelectedGraph(e.target.value)} className="chart-select">
-                <option value="">Select Graph Type</option>
-                <option value="fogIndex">Fog Index Chart</option>
-                <option value="fogOverTime">History Chart</option>
-                <option value="fogOverTimeBenchmarked">Benchmarked Chart</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Separate Benchmark Section */}
+          
           <div className="benchmark-section">
             <button 
               className="add-benchmark-button" 
@@ -158,12 +138,24 @@ const FogIndexCalculator = () => {
             </button>
           </div>
 
-          {/* Render Selected Chart */}
-          {selectedGraph === "fogIndex" && <FogIndexChart data={result} />}
-          {selectedGraph === "fogOverTime" && <TrendChart repoUrl={githubUrl} />} {/* Pass repoUrl */}
-          {selectedGraph === "fogOverTimeBenchmarked" && <BenchmarkedChart repoUrl={githubUrl} />}
+          <div className="graph-container">
+            <div className="graph-section">
+              <h3>Fog Index Breakdown</h3>
+              <FogIndexChart data={result} />
+            </div>
 
-          {/* Benchmark Modal */}
+            <div className="graph-section">
+              <h3>Fog Index Over Time</h3>
+              <TrendChart repoUrl={githubUrl} />
+            </div>
+
+            <div className="graph-section">
+              <h3>Benchmark Comparison</h3>
+              <BenchmarkedChart repoUrl={githubUrl} />
+            </div>
+          </div>
+
+          
           {showBenchmarkModal && (
             <div className="benchmark-modal">
               <div className="benchmark-modal-content">
