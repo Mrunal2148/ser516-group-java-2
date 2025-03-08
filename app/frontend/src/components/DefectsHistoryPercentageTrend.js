@@ -153,8 +153,8 @@ const DefectsHistoryPercentageTrend = ({ githubUrl }) => {
 
     return (
         <div style={{ height: "100%" }}>
-             {benchmarkDataset.length === 0 && (
-        <p style={{ padding: 5, fontWeight: "bold", color: "red" }}>
+             {benchmarkValues.length === 0 && (
+        <p style={{ padding: 8, fontWeight: "bold", color: "red" }}>
           No benchmark data available. Please add benchmarks and reload the page to see the Benchmark over Time graph.
         </p>
       )}
