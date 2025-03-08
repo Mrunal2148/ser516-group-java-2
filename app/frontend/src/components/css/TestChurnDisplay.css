@@ -80,3 +80,27 @@
     font-size: 16px;
     margin: 5px 0;
   }
+  .download-report-button {
+    display: inline-flex;
+    align-items: center;
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    margin-top: 15px;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .download-report-button:hover {
+    background-color: #218838;
+  }
+  
+  /* 🎯 Adding the Download Icon */
+  .download-report-button::before {
+    content: "⬇";  /* Unicode Down Arrow */
+    font-size: 18px;
+    margin-right: 8px;
+  }

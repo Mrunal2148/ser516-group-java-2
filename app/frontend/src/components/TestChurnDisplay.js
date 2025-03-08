@@ -9,6 +9,8 @@ const TestChurnDisplay = () => {
   const [endDate, setEndDate] = useState("");
   const location = useLocation();
   const { owner, repo } = location.state || {};
+  const [reportAvailable, setReportAvailable] = useState(false);
+  const [reportUrl, setReportUrl] = useState("");
 
   const fetchTestChurn = async () => {
     if (!startDate || !endDate) {
@@ -23,6 +25,14 @@ const TestChurnDisplay = () => {
       );
       const result = await response.json();
       setData(result);
+
+      // Check if the report is available
+      if (result.report_download_url && result.report_download_url !== "Report not found") {
+        setReportAvailable(true);
+        setReportUrl(`http://localhost:8080${result.report_download_url}`);
+      } else {
+        setReportAvailable(false);
+      }
     } catch (error) {
       console.error("Error fetching test churn data:", error);
     }
@@ -31,7 +41,7 @@ const TestChurnDisplay = () => {
 
   return (
     <div className="test-churn-container">
-      <h2 className="test-churn-title">Test Churn for : {repo}</h2>
+      <h2 className="test-churn-title">Test Churn for: {repo}</h2>
       <div className="input-group">
         <label>Start Date:</label>
         <input
@@ -64,6 +74,15 @@ const TestChurnDisplay = () => {
             <p><strong>Deleted Tests:</strong> {data.deleted_tests}</p>
             <p><strong>Timestamp:</strong> {data.timestamp}</p>
           </div>
+          {reportAvailable && (
+            <a
+              href={reportUrl}
+              download
+              className="download-report-button"
+            >
+              Download Report
+            </a>
+          )}
         </div>
       )}
     </div>
