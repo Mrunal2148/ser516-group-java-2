@@ -97,13 +97,22 @@ const CombinedCoverageChart = ({ data, githubUrl, benchmarks }) => {
   };
 
   return (
-      <div style={{ height: "400px" }}> {/* Add fixed height */}
-        <p style={{ textAlign: "center", fontSize: "14px", color: "#555" }}>
+      <div style={{ height: "100%" }}> {/* Add fixed height */}
+         {benchmarkDataset.length === 0 && (
+        <p style={{ padding: 5, fontWeight: "bold", color: "red" }}>
+          No benchmark data available. Please add benchmarks and reload the page to see the Benchmark over Time graph.
+        </p>
+      )}
+        <p style={{ padding: 5, textAlign: "center", fontSize: "14px", color: "#555" }}>
           Note: All timestamps are in UTC.
         </p>
+
         <Line data={chartData} options={options} />
       </div>
   );
 };
 
 export default CombinedCoverageChart;
+
+
+

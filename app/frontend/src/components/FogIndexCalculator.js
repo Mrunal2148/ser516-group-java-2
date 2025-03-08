@@ -118,13 +118,11 @@ const FogIndexCalculator = () => {
               </tr>
             </thead>
             <tbody>
-              {Object.entries(result).map(([key, value]) => (
-                <tr key={key}>
-                  <td>{key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}</td>
-                  <td>{value}</td>
-                </tr>
-              ))}
-            </tbody>
+        <tr>
+          <td>Fog Index</td>
+          <td>{result.fogIndex}</td>
+        </tr>
+      </tbody>
           </table>
 
           
