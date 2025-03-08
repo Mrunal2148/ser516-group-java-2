@@ -49,7 +49,7 @@ const CoverageDashboard = ({ selectedRepo, benchmarks }) => {
             ) : error ? (
                 <p>{error}</p>
             ) : chartData.length > 0 ? (
-                <div className="graph-container card">
+                <div className="graph-container">
                     <div className="graph-section">
                         <h3>Coverage Breakdown</h3>
                         <CoverageChart chartData={chartData} />

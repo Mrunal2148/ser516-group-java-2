@@ -110,7 +110,7 @@ const BenchmarkedChart = ({ repoUrl }) => {
 
 
   return (
-    <div style={{ height: "400px" }}>
+    <div style={{ height: "100%" }}>
       <Line data={data} options={options} />;
     </div>
   );

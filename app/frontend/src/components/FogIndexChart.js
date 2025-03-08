@@ -90,7 +90,7 @@ const FogIndexChart = ({ data }) => {
   };
 
   return (
-    <div>
+    <div style={{ height: "100%" }}>
       <Bar data={chartData} options={options} />
     </div>
   );
