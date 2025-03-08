@@ -57,8 +57,7 @@ const DefectMetricsChart = ({ data }) => {
   };
 
   return (
-    <div style={{ width: "80%", margin: "auto" }}>
-      <h3>Defect Metrics Chart</h3>
+    <div style={{ height: "400px" }}>
       <Bar data={chartData} options={options} />
     </div>
   );

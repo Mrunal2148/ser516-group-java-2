@@ -152,10 +152,8 @@ const DefectsHistoryPercentageTrend = ({ githubUrl }) => {
     };
 
     return (
-        <div className="defects-trend-container">
-            <div className="graph-container">
-                <Line data={chartData} options={options} />
-            </div>
+        <div style={{ height: "400px" }}>
+            <Line data={chartData} options={options} />
         </div>
     );
 };

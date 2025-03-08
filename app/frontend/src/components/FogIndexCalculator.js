@@ -137,9 +137,9 @@ const FogIndexCalculator = () => {
             </button>
           </div>
 
-          <div className="graph-container">
+          <div className="graph-container card">
             <div className="graph-section">
-              <h3>Fog Index Breakdown</h3>
+              <h3>Fog Index Complexity Breakdown</h3>
               <FogIndexChart data={result} />
             </div>
 
