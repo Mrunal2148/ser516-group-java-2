@@ -42,7 +42,7 @@ const CoverageDashboard = ({ selectedRepo, benchmarks }) => {
 
     return (
         <div style={{ width: "100%", padding: "20px" }}>
-            <h2>Code Comment Coverage Breakdown</h2>
+            {/* <h2>Code Comment Coverage Breakdown</h2> */}
 
             {loading ? (
                 <p>Loading...</p>
