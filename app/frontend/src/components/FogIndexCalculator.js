@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import FogIndexChart from "../components/FogIndexChart";
 import BenchmarkedChart from "./FogIndexBenchmarked";
-import TrendChart from "./FogIndexTrend";
 import Benchmarks from "../components/Benchmarks";
 import "./css/FogIndexCalculator.css";
 
@@ -138,15 +137,10 @@ const FogIndexCalculator = () => {
             </button>
           </div>
 
-          <div className="graph-container">
+          <div className="graph-container card">
             <div className="graph-section">
-              <h3>Fog Index Breakdown</h3>
+              <h3>Fog Index Complexity Breakdown</h3>
               <FogIndexChart data={result} />
-            </div>
-
-            <div className="graph-section">
-              <h3>Fog Index Over Time</h3>
-              <TrendChart repoUrl={githubUrl} />
             </div>
 
             <div className="graph-section">

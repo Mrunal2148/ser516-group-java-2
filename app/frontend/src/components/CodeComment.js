@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import CoverageDashboard from "./CoverageDashboard";
-import CoverageTrendChart from "./CoverageTrendChart";
-import CombinedCoverageChart from "./CombinedCoverageChart";
 import Benchmarks from "./Benchmarks";
 import "../components/css/CodeComment.css";
 
@@ -68,7 +66,7 @@ export default function CodeComment() {
 
   return (
       <div className="code-comment-container">
-        <h2 className="code-comment-title">📊 Code Comment Coverage</h2>
+        <h2 className="code-comment-title">Code Comment Coverage</h2>
         <p className="code-comment-repo">
           <b>Repository:</b>{" "}
           <a href={githubUrl} target="_blank" rel="noopener noreferrer">
@@ -101,7 +99,7 @@ export default function CodeComment() {
                     className="add-benchmark-button"
                     onClick={() => setShowBenchmarkModal(true)}
                 >
-                  ➕ Add Benchmark
+                  Add Benchmark
                 </button>
               </div>
 

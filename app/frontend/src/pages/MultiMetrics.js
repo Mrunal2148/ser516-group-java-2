@@ -1,7 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import FogIndexCalculator from "../components/FogIndexCalculator";
-import CoverageDashboard from "../components/CoverageDashboard";
 import DefectsRemoved from "../pages/DefectsRemoved";
 import CodeComment from "../components/CodeComment";
 import "../components/css/MultiMetrics.css"; 
