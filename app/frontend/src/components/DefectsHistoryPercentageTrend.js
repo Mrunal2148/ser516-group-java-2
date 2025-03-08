@@ -152,7 +152,7 @@ const DefectsHistoryPercentageTrend = ({ githubUrl }) => {
     };
 
     return (
-        <div style={{ height: "400px" }}>
+        <div style={{ height: "100%" }}>
             <Line data={chartData} options={options} />
         </div>
     );
