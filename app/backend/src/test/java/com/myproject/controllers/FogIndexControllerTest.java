@@ -3,6 +3,7 @@ package com.myproject.controllers;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 import java.util.Map;
 
@@ -41,4 +42,27 @@ public class FogIndexControllerTest {
         assertTrue(((java.util.List<?>)response.getBody()).isEmpty(),
             "Expected an empty list for the dummy URL’s history");
     }
+
+    @Test
+    void testCalculateFogIndex_SuccessWithRealRepo() {
+        FogIndexController controller = new FogIndexController();
+        String realRepoUrl = "https://github.com/Mrunal2148/ser516-group-java-2/archive/refs/heads/Period-2.zip";
+
+        ResponseEntity<Map<String, Object>> response = controller.calculateFogIndex(realRepoUrl);
+
+        assertNotNull(response, "Controller returned a null ResponseEntity");
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            Map<String, Object> body = response.getBody();
+            assertNotNull(body, "Response body should not be null");
+            assertTrue(body.containsKey("fogIndex"), "Body should contain a ‘fogIndex’ key");
+            assertTrue(body.containsKey("message"), "Body should contain a ‘message’ key");
+            assertEquals("Calculation successful", body.get("message"),
+                    "Expected a ‘Calculation successful’ message in the response");
+        } else {
+            fail("Expected a 200 OK, but got " + response.getStatusCode()
+                 + ". Details: " + response.getBody());
+        }
+    }
+
 }
