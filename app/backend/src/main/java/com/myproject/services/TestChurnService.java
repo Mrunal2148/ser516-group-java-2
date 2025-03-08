@@ -227,37 +227,36 @@ public class TestChurnService {
         allFiles.addAll(normalizedOldTestFiles.keySet());
         allFiles.addAll(normalizedNewTestFiles.keySet());
     
-       //File logFile = new File("test_churn_log4.txt");
-        
-        // try (BufferedWriter writer = new BufferedWriter(new FileWriter(logFile, true))) {
-        //     writer.write("==== Test Churn Analysis Log ====\n");
-        //     writer.write("Timestamp: " + new Date() + "\n");
-         try{
+        // Report file
+        File reportFile = new File("test_churn_report.md");
+    
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(reportFile))) {
+            writer.write("# Test Churn Report\n");
+            writer.write("Generated on: " + new Date() + "\n\n");
+    
             for (String filePath : allFiles) {
                 String oldContent = normalizedOldTestFiles.getOrDefault(filePath, "");
                 String newContent = normalizedNewTestFiles.getOrDefault(filePath, "");
-            
+    
                 Set<String> oldTests = extractTestCases(oldContent);
                 Set<String> newTests = extractTestCases(newContent);
-            
+    
                 // Finding added tests
                 for (String newTest : newTests) {
                     if (!oldTests.contains(newTest)) {
                         addedTests++;
-                    // writer.write(" ➕ ADDED: " + newTest + " (in file: " + filePath + ")\n");
-                    //     logger.info("➕ ADDED: " + newTest + " (in file: " + filePath + ")");
+                        writer.write("### ➕ ADDED: `" + newTest + "` (File: `" + filePath + "`)\n\n");
                     }
                 }
-            
+    
                 // Finding deleted tests
                 for (String oldTest : oldTests) {
                     if (!newTests.contains(oldTest)) {
                         deletedTests++;
-                        // writer.write(" ❌Deleted: " + oldTest + " (in file: " + filePath + ")\n");
-                        // logger.info("❌ DELETED: " + oldTest + " (from file: " + filePath + ")");
+                        writer.write("### ❌ DELETED: `" + oldTest + "` (File: `" + filePath + "`)\n\n");
                     }
                 }
-            
+    
                 // Finding modified tests
                 for (String test : oldTests) {
                     if (newTests.contains(test)) {
@@ -265,17 +264,21 @@ public class TestChurnService {
                         String newBody = extractTestMethodBody(newContent, test);
                         if (!oldBody.equals(newBody)) {
                             modifiedTests++;
-                            // writer.write(" - MODIFIED: " + test + " (in file: " + filePath + ")\n");
-                            // logger.info("✏️ MODIFIED: " + test + " (in file: " + filePath + ")");
+                            writer.write("### ✏️ MODIFIED: `" + test + "` (File: `" + filePath + "`)\n");
+                            writer.write("#### 🟡 Old Version:\n```\n" + oldBody + "\n```\n");
+                            writer.write("#### 🟢 New Version:\n```\n" + newBody + "\n```\n\n");
                         }
                     }
                 }
             }
-            
     
-            //writer.write("==== End of Log ====\n\n");
+            writer.write("## Summary\n");
+            writer.write("- **Added Tests:** " + addedTests + "\n");
+            writer.write("- **Deleted Tests:** " + deletedTests + "\n");
+            writer.write("- **Modified Tests:** " + modifiedTests + "\n");
+    
         } catch (Exception e) {
-            logger.error("Error writing to log file", e);
+            logger.error("Error writing test churn report", e);
         }
     
         Map<String, Object> testChurnMetrics = new HashMap<>();
@@ -283,9 +286,82 @@ public class TestChurnService {
         testChurnMetrics.put("deleted_tests", deletedTests);
         testChurnMetrics.put("modified_tests", modifiedTests);
         testChurnMetrics.put("timestamp", new Date().toString());
+        testChurnMetrics.put("report_path", reportFile.getAbsolutePath());
     
         return testChurnMetrics;
     }
+    
+
+    // private Map<String, Object> analyzeTestChurn(Map<String, String> oldTestFiles, Map<String, String> newTestFiles) {
+    //     int addedTests = 0, deletedTests = 0, modifiedTests = 0;
+    //     Set<String> allFiles = new HashSet<>();
+    
+    //     // Normalize file paths (remove commit SHA from the path)
+    //     Map<String, String> normalizedOldTestFiles = normalizeFilePaths(oldTestFiles);
+    //     Map<String, String> normalizedNewTestFiles = normalizeFilePaths(newTestFiles);
+    
+    //     allFiles.addAll(normalizedOldTestFiles.keySet());
+    //     allFiles.addAll(normalizedNewTestFiles.keySet());
+    
+    //    //File logFile = new File("test_churn_log4.txt");
+        
+    //     // try (BufferedWriter writer = new BufferedWriter(new FileWriter(logFile, true))) {
+    //     //     writer.write("==== Test Churn Analysis Log ====\n");
+    //     //     writer.write("Timestamp: " + new Date() + "\n");
+    //      try{
+    //         for (String filePath : allFiles) {
+    //             String oldContent = normalizedOldTestFiles.getOrDefault(filePath, "");
+    //             String newContent = normalizedNewTestFiles.getOrDefault(filePath, "");
+            
+    //             Set<String> oldTests = extractTestCases(oldContent);
+    //             Set<String> newTests = extractTestCases(newContent);
+            
+    //             // Finding added tests
+    //             for (String newTest : newTests) {
+    //                 if (!oldTests.contains(newTest)) {
+    //                     addedTests++;
+    //                 // writer.write(" ➕ ADDED: " + newTest + " (in file: " + filePath + ")\n");
+    //                 //     logger.info("➕ ADDED: " + newTest + " (in file: " + filePath + ")");
+    //                 }
+    //             }
+            
+    //             // Finding deleted tests
+    //             for (String oldTest : oldTests) {
+    //                 if (!newTests.contains(oldTest)) {
+    //                     deletedTests++;
+    //                     // writer.write(" ❌Deleted: " + oldTest + " (in file: " + filePath + ")\n");
+    //                     // logger.info("❌ DELETED: " + oldTest + " (from file: " + filePath + ")");
+    //                 }
+    //             }
+            
+    //             // Finding modified tests
+    //             for (String test : oldTests) {
+    //                 if (newTests.contains(test)) {
+    //                     String oldBody = extractTestMethodBody(oldContent, test);
+    //                     String newBody = extractTestMethodBody(newContent, test);
+    //                     if (!oldBody.equals(newBody)) {
+    //                         modifiedTests++;
+    //                         // writer.write(" - MODIFIED: " + test + " (in file: " + filePath + ")\n");
+    //                         // logger.info("✏️ MODIFIED: " + test + " (in file: " + filePath + ")");
+    //                     }
+    //                 }
+    //             }
+    //         }
+            
+    
+    //         //writer.write("==== End of Log ====\n\n");
+    //     } catch (Exception e) {
+    //         logger.error("Error writing to log file", e);
+    //     }
+    
+    //     Map<String, Object> testChurnMetrics = new HashMap<>();
+    //     testChurnMetrics.put("added_tests", addedTests);
+    //     testChurnMetrics.put("deleted_tests", deletedTests);
+    //     testChurnMetrics.put("modified_tests", modifiedTests);
+    //     testChurnMetrics.put("timestamp", new Date().toString());
+    
+    //     return testChurnMetrics;
+    // }
     
     private Map<String, String> normalizeFilePaths(Map<String, String> testFiles) {
         Map<String, String> normalizedFiles = new HashMap<>();
