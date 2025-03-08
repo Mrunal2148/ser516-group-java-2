@@ -49,13 +49,13 @@ const CoverageDashboard = ({ selectedRepo, benchmarks }) => {
             ) : error ? (
                 <p>{error}</p>
             ) : chartData.length > 0 ? (
-                <div className="graph-container">
-                    <div className="graph-section">
+                <div className="graph-container-comment">
+                    <div className="graph-section-comment">
                         <h3>Coverage Breakdown</h3>
                         <CoverageChart chartData={chartData} />
                     </div>
 
-                    <div className="graph-section">
+                    <div className="graph-section-comment">
                         <h3>Benchmark Comparison Over Time</h3>
                         <CombinedCoverageChart data={historyData} githubUrl={selectedRepo} benchmarks={benchmarks} />
                     </div>
