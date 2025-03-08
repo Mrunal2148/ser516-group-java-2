@@ -1,10 +1,10 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import FogIndexCalculator from "../components/FogIndexCalculator";
-import CoverageDashboard from "../components/CoverageDashboard";
 import DefectsRemoved from "../pages/DefectsRemoved";
 import CodeComment from "../components/CodeComment";
 import "../components/css/MultiMetrics.css"; 
+import TestChurnDisplay from "../components/TestChurnDisplay";
 
 const MultiMetrics = () => {
   const location = useLocation();
@@ -19,6 +19,7 @@ const MultiMetrics = () => {
           {selectedMetrics.includes("fog-index") && <FogIndexCalculator githubUrl={githubUrl} />}
           {selectedMetrics.includes("code-comment-coverage") && <CodeComment selectedRepo={githubUrl} />}
           {selectedMetrics.includes("defects-removed") && <DefectsRemoved owner={owner} repo={repo} />}
+          {selectedMetrics.includes("test-churn") && <TestChurnDisplay owner={owner} repo={repo} /> }
         </>
       ) : (
         <p className="no-metrics-selected">No metrics selected.</p>

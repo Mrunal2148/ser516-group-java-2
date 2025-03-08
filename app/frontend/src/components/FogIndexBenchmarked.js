@@ -53,9 +53,6 @@ const BenchmarkedChart = ({ repoUrl }) => {
     fetchBenchmarkHistory();
   }, [repoUrl]);
 
-  if (!historyData.length || benchmarkHistory.length===0) {
-    return <p style={{padding:20}}>No benchmark data available. Please add benchmarks and reload the page to see the Benchmark over Time graph!</p>;
-}
 
   const labels = [...new Set([...historyData.map(item => item.generatedTime), ...benchmarkHistory.map(item => item.time)])].sort();
 
@@ -108,8 +105,18 @@ const BenchmarkedChart = ({ repoUrl }) => {
     },
   };
 
-
-  return <Line data={data} options={options} />;
+  return (
+    <div style={{ height: "100%" }}>
+      {benchmarkHistory.length === 0 && (
+        <p style={{ padding: 5, fontWeight: "bold", color: "red" }}>
+          No benchmark data available. Please add benchmarks and reload the page to see the Benchmark over Time graph.
+        </p>
+      )}
+      
+      <Line data={data} options={options} />
+    </div>
+  );
+  
 };
 
 export default BenchmarkedChart;

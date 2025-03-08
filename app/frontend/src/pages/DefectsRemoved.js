@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 import "../components/css/DefectsRemoved.css";
 import DefectMetricsChart from "../components/DefectMetricsChart";
 import DefectsHistoryPercentageTrend from "../components/DefectsHistoryPercentageTrend";
-import DefectsBenchmarkTrend from "../components/DefectsBenchmarkTrend";
 import Benchmarks from "../components/Benchmarks";
 
 const DefectsRemoved = () => {
@@ -32,6 +31,23 @@ const DefectsRemoved = () => {
           setError("No defect data available for this repository.");
           return;
         }
+
+        // 1. Gather all "year-week" keys
+        const openedKeys = Object.keys(data.weeklyOpenedBugs || {});
+        const closedKeys = Object.keys(data.weeklyClosedBugs || {});
+        const allKeys = [...new Set([...openedKeys, ...closedKeys])];
+
+        // 2. Sort them numerically by year, then week
+        allKeys.sort((a, b) => {
+          const [yearA, wA] = a.split("-W");
+          const [yearB, wB] = b.split("-W");
+          return parseInt(yearA) - parseInt(yearB) || parseInt(wA) - parseInt(wB);
+        });
+
+        // 3. Earliest is startWeek, latest is endWeek
+        data.startWeek = allKeys[0] ?? "N/A";
+        data.endWeek = allKeys[allKeys.length - 1] ?? "N/A";
+
         setBugStats(data);
         setError(null);
       })
@@ -41,7 +57,7 @@ const DefectsRemoved = () => {
   const githubUrl = owner && repo ? `https://github.com/${owner}/${repo}` : "";
 
   return (
-    <div className="defects-container">
+    <div className="defects-container card">
       <h2 className="code-comment-title">Defects Removed Metrics</h2>
 
       {githubUrl && (
@@ -70,8 +86,8 @@ const DefectsRemoved = () => {
               <tr>
                 <td>{bugStats.totalOpenedBugs || 0}</td>
                 <td>{bugStats.totalClosedBugs || 0}</td>
-                <td>{bugStats.startWeek || "N/A"}</td>
-                <td>{bugStats.endWeek || "N/A"}</td>
+                <td>{bugStats.startWeek}</td>
+                <td>{bugStats.endWeek}</td>
               </tr>
             </tbody>
           </table>
@@ -89,19 +105,15 @@ const DefectsRemoved = () => {
           
           <div className="graph-container">
             <div className="graph-section">
-              <h3>Defect Metrics Overview</h3>
+              <h3>Defect Metrics Chart</h3>
               <DefectMetricsChart data={bugStats} />
             </div>
 
             <div className="graph-section">
-              <h3>Defects Removed Percentage Trend</h3>
+              <h3>Defects Removed Percentage Angainst Benchmark Trend</h3>
               <DefectsHistoryPercentageTrend githubUrl={githubUrl} />
             </div>
 
-            <div className="graph-section">
-              <h3>Defects Benchmark Trend</h3>
-              <DefectsBenchmarkTrend githubUrl={githubUrl} />
-            </div>
           </div>
 
           
