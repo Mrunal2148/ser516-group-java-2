@@ -57,7 +57,7 @@ const DefectsRemoved = () => {
   const githubUrl = owner && repo ? `https://github.com/${owner}/${repo}` : "";
 
   return (
-    <div className="defects-container">
+    <div className="defects-container card">
       <h2 className="code-comment-title">Defects Removed Metrics</h2>
 
       {githubUrl && (
@@ -103,7 +103,7 @@ const DefectsRemoved = () => {
           </div>
 
           
-          <div className="graph-container card">
+          <div className="graph-container">
             <div className="graph-section">
               <h3>Defect Metrics Chart</h3>
               <DefectMetricsChart data={bugStats} />

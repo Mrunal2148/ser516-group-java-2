@@ -65,7 +65,7 @@ export default function CodeComment() {
   }, [githubUrl]);
 
   return (
-      <div className="code-comment-container">
+      <div className="code-comment-container card">
         <h2 className="code-comment-title">Code Comment Coverage</h2>
         <p className="code-comment-repo">
           <b>Repository:</b>{" "}
