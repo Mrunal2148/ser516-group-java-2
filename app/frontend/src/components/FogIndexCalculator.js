@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import FogIndexChart from "../components/FogIndexChart";
 import BenchmarkedChart from "./FogIndexBenchmarked";
-import TrendChart from "./FogIndexTrend";
 import Benchmarks from "../components/Benchmarks";
 import "./css/FogIndexCalculator.css";
 
@@ -97,7 +96,7 @@ const FogIndexCalculator = () => {
   };
 
   return (
-    <div className="fog-index-container">
+    <div className="fog-index-container card">
       <h2 className="code-comment-title">Fog Index Calculator</h2>
 
       {githubUrl && (
@@ -119,13 +118,11 @@ const FogIndexCalculator = () => {
               </tr>
             </thead>
             <tbody>
-              {Object.entries(result).map(([key, value]) => (
-                <tr key={key}>
-                  <td>{key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}</td>
-                  <td>{value}</td>
-                </tr>
-              ))}
-            </tbody>
+        <tr>
+          <td>Fog Index</td>
+          <td>{result.fogIndex}</td>
+        </tr>
+      </tbody>
           </table>
 
           
@@ -140,13 +137,8 @@ const FogIndexCalculator = () => {
 
           <div className="graph-container">
             <div className="graph-section">
-              <h3>Fog Index Breakdown</h3>
+              <h3>Fog Index Complexity Breakdown</h3>
               <FogIndexChart data={result} />
-            </div>
-
-            <div className="graph-section">
-              <h3>Fog Index Over Time</h3>
-              <TrendChart repoUrl={githubUrl} />
             </div>
 
             <div className="graph-section">
